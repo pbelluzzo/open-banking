@@ -13,14 +13,14 @@ class CreateContractsTable extends Migration
      */
     public function up()
     {
-        Schema::create('contratos', function (Blueprint $table) {
+        Schema::create('contracts', function (Blueprint $table) {
             $table->id();
-            $table->integer('id_conta')->references('id')->on('contas');
-            $table->integer('id_produto')->references('id')->on('produtos_financeiros');
-            $table->decimal('valor_investido',15,2);
-            $table->decimal('taxa_de_administracao',4,2);
-            $table->date('data_de_contratacao');
-            $table->boolean('finalizado');
+            $table->integer('account_id')->references('id')->on('accounts');
+            $table->integer('product_id')->references('id')->on('financial_products');
+            $table->decimal('amount_invested',15,2);
+            $table->decimal('administration_fee',4,2);
+            $table->date('hiring_date');
+            $table->boolean('finished');
             $table->timestamps();
         });
     }
@@ -32,6 +32,6 @@ class CreateContractsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('contratos');
+        Schema::dropIfExists('contracts');
     }
 }

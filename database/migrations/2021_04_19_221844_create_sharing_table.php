@@ -13,13 +13,13 @@ class CreateSharingTable extends Migration
      */
     public function up()
     {
-        Schema::create('compartilhamentos', function (Blueprint $table) {
+        Schema::create('sharings', function (Blueprint $table) {
             $table->id();
-            $table->string('cpf_cliente')->references('cpf')->on('clientes');
-            $table->string('cnpj_origem')->references('cnpj')->on('instituicao_financeira');
-            $table->string('cnpj_destino')->references('cnpj')->on('instituicao_financeira');
-            $table->date('data_do_aceite');
-            $table->boolean('ainda_vigente');
+            $table->string('client_id')->references('id')->on('clients');
+            $table->string('origin_institution_id')->references('id')->on('financial_institutions');
+            $table->string('destiny_institution_id')->references('id')->on('financial_institutions');
+            $table->date('acceptance_date');
+            $table->boolean('still_in_force');
             $table->timestamps();
         });
     }
@@ -31,6 +31,6 @@ class CreateSharingTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('compartilhamentos');
+        Schema::dropIfExists('sharings');
     }
 }

@@ -13,13 +13,13 @@ class CreateInstitutionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('instituicao_financeira', function (Blueprint $table) {
+        Schema::create('financial_institutions', function (Blueprint $table) {
             $table->id();
-            $table->string('cpf')->primary();
-            $table->string('razao_social')->unique();
-            $table->string('nome_fantasia');
-            $table->string('cod_bancario');
-            $table->string('caminho_logo');
+            $table->string('cnpj');
+            $table->string('company_name')->unique();
+            $table->string('fantasy_name');
+            $table->string('bank_code');
+            $table->string('logo_path');
             $table->timestamps();
         });
     }
@@ -31,6 +31,6 @@ class CreateInstitutionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('instituicao_financeira');
+        Schema::dropIfExists('financial_institutions');
     }
 }

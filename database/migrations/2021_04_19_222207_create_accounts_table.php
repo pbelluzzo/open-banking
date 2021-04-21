@@ -13,13 +13,13 @@ class CreateAccountsTable extends Migration
      */
     public function up()
     {
-        Schema::create('contas', function (Blueprint $table) {
+        Schema::create('accounts', function (Blueprint $table) {
             $table->id();
-            $table->string('cpf_cliente')->references('cpf')->on('clientes');
-            $table->string('cnpj_instituicao')->references('cnpj')->on('instituicao_financeira');
-            $table->decimal('saldo',15,2);            
+            $table->string('client_id')->references('id')->on('clients');
+            $table->string('institution_id')->references('id')->on('financial_institutions');
+            $table->decimal('balance',15,2);            
             $table->timestamps();
-            $table->dateTime('encerrada_em')->nullable();
+            $table->dateTime('ended_in')->nullable();
         });
     }
 
@@ -30,6 +30,6 @@ class CreateAccountsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('contas');
+        Schema::dropIfExists('accounts');
     }
 }
