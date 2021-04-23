@@ -19,6 +19,6 @@ class Clients extends Model
     public function setBirthdateAttribute($birthdate)
     {
         $this->attributes['birthdate'] = Carbon::createFromFormat('d/m/Y', $birthdate);
-        //$this->attributes['birthdate'] = Carbon::parse($birthdate);
     }
+
 }

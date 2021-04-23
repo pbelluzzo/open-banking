@@ -18,4 +18,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('/clients', [App\Http\Controllers\ClientsController::class, 'store']);
+Route::post('/clients', 'ClientsController@store');
+Route::get('/clients/{client}', 'ClientsController@show');
+Route::patch('/clients/{client}', 'ClientsController@update');
+Route::delete('/clients/{client}', 'ClientsController@destroy');

@@ -22,7 +22,7 @@ class ClientsTest extends TestCase
         $this->assertEquals('526.683.577-05', $client->cpf);
         $this->assertEquals('Test Name', $client->name);
         $this->assertEquals('Rua teste, nº teste', $client->address);
-        $this->assertEquals('15/01/1999',$client->birthdate);
+        $this->assertEquals('15/01/1999',$client->birthdate->format('d/m/Y'));
     }
 
     /** @test */
@@ -64,12 +64,65 @@ class ClientsTest extends TestCase
     }
 
     /** @test */
-    public function a_client_can_be_retrieved()
+    public function a_client_can_be_recovered()
     {
-        $client = Clients::factory()->make();
+        $client = Clients::factory()->create();
+        
+        $response = $this->get('/api/clients/' . $client->id);
 
-        dd($client);
+        $response->assertJsonFragment([
+            'id' => $client->id,
+            'cpf' => $client->cpf,
+            'name' => $client->name,
+            'address' => $client->address,
+            'birthdate' => $client->birthdate
+        ]);
 
+    }
+
+    /** @test */
+    public function a_client_can_be_patched()
+    {
+        $this->withoutExceptionHandling();
+
+        $client = Clients::factory()->create();
+
+        $response = $this->patch('/api/clients/' . $client->id, $this->getFakeData());
+
+        $client = $client->fresh();
+
+        $this->assertEquals('526.683.577-05', $client->cpf);
+        $this->assertEquals('Test Name', $client->name);
+        $this->assertEquals('Rua teste, nº teste', $client->address);
+        $this->assertEquals('15/01/1999',$client->birthdate->format('d/m/Y'));
+    }
+
+    /** @test */
+    public function cpf_must_be_valid_to_patch()
+    {
+        $client = Clients::factory()->create();
+
+        $response = $this->patch('/api/clients/' . $client->id,
+            array_merge($this->getFakeData(),['cpf' => 'NOT A VALID CPF']));
+        
+        $response->assertSessionHasErrors('cpf');
+
+        $this->assertEquals($client->cpf,Clients::first()->cpf);
+        $this->assertEquals($client->name,Clients::first()->name);
+        $this->assertEquals($client->address,Clients::first()->address);
+        $this->assertEquals($client->birthdate,Clients::first()->birthdate);
+    }
+
+    /** @test */
+    public function a_client_can_be_deleted()
+    {
+        $this->withoutExceptionHandling();
+
+        $client = Clients::factory()->create();
+
+        $response = $this->delete('/api/clients/' . $client->id);
+
+        $this->assertCount(0,Clients::all());
     }
 
     private function getFakeData()

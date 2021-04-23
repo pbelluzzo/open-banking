@@ -22,7 +22,7 @@ class ClientsFactory extends Factory
     public function definition()
     {
         return [
-            'cpf' => '526.683.577-05',
+            'cpf' => $this->faker->cpf(),
             'name' => $this->faker->name(),
             'address' => $this->faker->address(),
             'birthdate' => $this->faker->date('d/m/Y')
