@@ -12,7 +12,7 @@ class FinancialInstitutionsTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
-    public function a_institution_can_be_added()
+    public function an_institution_can_be_added()
     {
         $this->withoutExceptionHandling();
 

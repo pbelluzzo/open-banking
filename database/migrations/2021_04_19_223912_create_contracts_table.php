@@ -20,7 +20,7 @@ class CreateContractsTable extends Migration
             $table->decimal('amount_invested',15,2);
             $table->decimal('administration_fee',4,2);
             $table->date('hiring_date');
-            $table->boolean('finished');
+            $table->boolean('finished')->default(0);
             $table->timestamps();
         });
     }
