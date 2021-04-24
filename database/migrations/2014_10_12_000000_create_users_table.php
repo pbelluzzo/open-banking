@@ -17,10 +17,12 @@ class CreateUsersTable extends Migration
             $table->id();
             $table->string('login')->unique();
             $table->string('password');
+            $table->string('email');
             $table->tinyInteger('type');
             $table->integer('entity');
             $table->tinyInteger('active');
             $table->rememberToken();
+            $table->string('api_token');
             $table->timestamps();
         });
     }

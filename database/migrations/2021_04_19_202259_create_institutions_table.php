@@ -18,8 +18,8 @@ class CreateInstitutionsTable extends Migration
             $table->string('cnpj');
             $table->string('company_name')->unique();
             $table->string('fantasy_name');
-            $table->string('bank_code');
-            $table->string('logo_path');
+            $table->string('bank_code')->unique();
+            $table->string('logo_path')->nullable();
             $table->timestamps();
         });
     }

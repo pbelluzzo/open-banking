@@ -23,7 +23,8 @@ class ClientsController extends Controller
         $client->update($this->validateData());
     }
 
-    public function destroy(Clients $client){
+    public function destroy(Clients $client)
+    {
         $client->delete();
     }
 

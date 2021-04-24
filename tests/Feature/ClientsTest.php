@@ -7,14 +7,47 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Carbon\Carbon;
 use Tests\TestCase;
 use App\Models\Clients;
+use App\Models\User;
 
 class ClientsTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
-    public function a_client_can_be_added()
+    protected $user;
+
+    protected function setUp(): void
     {
+        parent::setUp();
+
+        $this->user = User::factory()->create();
+
+    }
+
+    /** @test */
+    public function a_list_of_clients_can_be_fetched_for_the_institution_authenticated_user()
+    {
+        $user = User::factory()->create();
+        $anotherUser= User::factory()->create();
+
+
+    }
+
+    /** @test */
+    public function an_unauthenticated_user_should_be_redirected_to_login()
+    {
+        $response = $this->post('/api/clients', 
+            array_merge($this->getFakeData(),['api_token' => '']));
+
+        $response->assertRedirect('/login');
+        $this->assertCount(0,Clients::all());
+    }
+
+    /** @test */
+    public function a_client_can_be_added_by_authenticated_user()
+    {
+        $this->withoutExceptionHandling();
+        
+
         $this->post('/api/clients', $this->getFakeData());
 
         $client = Clients::first();
@@ -30,6 +63,8 @@ class ClientsTest extends TestCase
     {
         foreach ($this->getFakeData() as $key => $value){
             $data = array_merge($this->getFakeData(), [$key => '']);
+           
+            if($key == 'api_token') continue;
             
             $response = $this->post('/api/clients', $data);
 
@@ -68,7 +103,8 @@ class ClientsTest extends TestCase
     {
         $client = Clients::factory()->create();
         
-        $response = $this->get('/api/clients/' . $client->id);
+        $response = $this->get('/api/clients/' . $client->id . 
+            '?api_token=' . $this->user->api_token);
 
         $response->assertJsonFragment([
             'id' => $client->id,
@@ -77,7 +113,6 @@ class ClientsTest extends TestCase
             'address' => $client->address,
             'birthdate' => $client->birthdate
         ]);
-
     }
 
     /** @test */
@@ -120,7 +155,8 @@ class ClientsTest extends TestCase
 
         $client = Clients::factory()->create();
 
-        $response = $this->delete('/api/clients/' . $client->id);
+        $response = $this->delete('/api/clients/' . $client->id,
+            ['api_token' => $this->user->api_token]);
 
         $this->assertCount(0,Clients::all());
     }
@@ -131,7 +167,8 @@ class ClientsTest extends TestCase
             'cpf' => '526.683.577-05',
             'name' => 'Test Name',
             'address' => 'Rua teste, nº teste',
-            'birthdate' => '15/01/1999'
+            'birthdate' => '15/01/1999',
+            'api_token' => $this->user->api_token
         ];
 
         return $data;

@@ -14,11 +14,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
+/* Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
+});*/
+
+Route::middleware('auth:api')->group(function() {
+    
+    Route::post('/clients', 'ClientsController@store');
+    Route::get('/clients/{client}', 'ClientsController@show');
+    Route::patch('/clients/{client}', 'ClientsController@update');
+    Route::delete('/clients/{client}', 'ClientsController@destroy');
 });
 
-Route::post('/clients', 'ClientsController@store');
-Route::get('/clients/{client}', 'ClientsController@show');
-Route::patch('/clients/{client}', 'ClientsController@update');
-Route::delete('/clients/{client}', 'ClientsController@destroy');
+    Route::post('/financial_institutions', 'FinancialInstitutionsController@store');
+    Route::get('/financial_institutions/{financial_institution}','FinancialInstitutionsController@show');
+    Route::patch('/financial_institutions/{financial_institution}', 'FinancialInstitutionsController@update');
+    Route::delete('/financial_institutions/{financial_institution}', 'FinancialInstitutionsController@destroy');
