@@ -32,7 +32,8 @@ class AccountsController extends Controller
         $data = request()->validate([
             'client_id' => 'required',
             'institution_id' => 'required',
-            'balance'=> 'required'
+            'balance'=> 'required|min:0',
+            'ended_in' => 'nullable'
         ]);
         return $data;
     }

@@ -6,13 +6,34 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\Models\Accounts;
+use App\Models\User;
 
 class AccountsTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected $user;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->user = User::factory()->create();
+
+    }
+
     /** @test */
-    public function an_account_can_be_added()
+    public function an_unauthenticated_user_should_be_redirected_to_login()
+    {
+        $response = $this->post('/api/accounts', 
+            array_merge($this->getFakeData(),['api_token' => '']));
+
+        $response->assertRedirect('/login');
+        $this->assertCount(0,Accounts::all());
+    }
+
+    /** @test */
+    public function an_account_can_be_added_by_authenticated_user()
     {
         $this->withoutExceptionHandling();
 
@@ -34,6 +55,7 @@ class AccountsTest extends TestCase
         foreach ($this->getFakeData() as $key => $value){
             $data = array_merge($this->getFakeData(), [$key => '']);
 
+            if($key == 'api_token') continue;
             if($key == 'ended_in') continue;
                        
             $response = $this->post('/api/accounts', $data);
@@ -51,7 +73,8 @@ class AccountsTest extends TestCase
 
         $account = Accounts::factory()->create();
             
-        $response = $this->get('/api/accounts/' . $account->id);
+        $response = $this->get('/api/accounts/' . $account->id . '?api_token=' .
+            $this->user->api_token);
 
         $response->assertJsonFragment([
             'id' => $account->id,
@@ -86,7 +109,8 @@ class AccountsTest extends TestCase
 
         $account = Accounts::factory()->create();
 
-        $response = $this->delete('/api/accounts/' . $account->id);
+        $response = $this->delete('/api/accounts/' . $account->id, 
+            ['api_token' => $this->user->api_token]);
 
         $this->assertCount(0,Accounts::all());
     }
@@ -97,7 +121,8 @@ class AccountsTest extends TestCase
             'client_id' => 1,
             'institution_id' => 1,
             'balance' => 1555.22,
-            'ended_in' => null
+            'ended_in' => null,
+            'api_token' => $this->user->api_token
         ];
     }
 }

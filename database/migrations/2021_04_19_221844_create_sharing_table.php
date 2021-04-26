@@ -18,8 +18,8 @@ class CreateSharingTable extends Migration
             $table->string('client_id')->references('id')->on('clients');
             $table->string('origin_institution_id')->references('id')->on('financial_institutions');
             $table->string('destiny_institution_id')->references('id')->on('financial_institutions');
-            $table->date('acceptance_date');
-            $table->boolean('still_in_force');
+            $table->date('acceptance_date')->nullable();
+            $table->string('xml_path')->nullable();
             $table->timestamps();
         });
     }

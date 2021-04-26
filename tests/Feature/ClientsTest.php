@@ -24,15 +24,6 @@ class ClientsTest extends TestCase
     }
 
     /** @test */
-    public function a_list_of_clients_can_be_fetched_for_the_institution_authenticated_user()
-    {
-        $user = User::factory()->create();
-        $anotherUser= User::factory()->create();
-
-
-    }
-
-    /** @test */
     public function an_unauthenticated_user_should_be_redirected_to_login()
     {
         $response = $this->post('/api/clients', 

@@ -6,13 +6,34 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use App\Models\FinancialInstitutions;
 use Tests\TestCase;
+use App\Models\User;
 
 class FinancialInstitutionsTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected $user;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->user = User::factory()->create();
+
+    }
+
     /** @test */
-    public function an_institution_can_be_added()
+    public function an_unauthenticated_user_should_be_redirected_to_login()
+    {
+        $response = $this->post('/api/financial_institutions', 
+            array_merge($this->getFakeData(),['api_token' => '']));
+
+        $response->assertRedirect('/login');
+        $this->assertCount(0,FinancialInstitutions::all());
+    }
+
+    /** @test */
+    public function an_institution_can_be_added_by_authenticated_user()
     {
         $this->withoutExceptionHandling();
 
@@ -33,6 +54,8 @@ class FinancialInstitutionsTest extends TestCase
     {
         foreach ($this->getFakeData() as $key => $value){
             $data = array_merge($this->getFakeData(), [$key => '']);
+
+            if($key == 'api_token') continue;
                        
             $response = $this->post('/api/financial_institutions', $data);
 
@@ -60,7 +83,8 @@ class FinancialInstitutionsTest extends TestCase
 
         $institution = FinancialInstitutions::factory()->create();
             
-        $response = $this->get('/api/financial_institutions/' . $institution->id);
+        $response = $this->get('/api/financial_institutions/' . $institution->id . '?api_token=' .
+            $this->user->api_token);
     
         $response->assertJsonFragment([
             'id' => $institution->id,
@@ -111,7 +135,8 @@ class FinancialInstitutionsTest extends TestCase
 
         $institution = FinancialInstitutions::factory()->create();
 
-        $response = $this->delete('/api/financial_institutions/' . $institution->id);
+        $response = $this->delete('/api/financial_institutions/' . $institution->id, 
+            ['api_token' => $this->user->api_token]);
 
         $this->assertCount(0,FinancialInstitutions::all());
     }
@@ -122,7 +147,8 @@ class FinancialInstitutionsTest extends TestCase
             'cnpj' => '56.049.352/0001-96',
             'company_name' => 'Empresa top ltda.',
             'fantasy_name' => 'Caçadores de dragões',
-            'bank_code' => '7070'
+            'bank_code' => '7070',
+            'api_token' => $this->user->api_token
         ];
     }
 }

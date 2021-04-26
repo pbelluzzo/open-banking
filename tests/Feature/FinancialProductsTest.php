@@ -6,13 +6,34 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\Models\FinancialProducts;
+use App\Models\User;
 
 class FinancialProductsTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected $user;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->user = User::factory()->create();
+
+    }
+
     /** @test */
-    public function a_product_can_be_added()
+    public function an_unauthenticated_user_should_be_redirected_to_login()
+    {
+        $response = $this->post('/api/financial_products', 
+            array_merge($this->getFakeData(),['api_token' => '']));
+
+        $response->assertRedirect('/login');
+        $this->assertCount(0,FinancialProducts::all());
+    }
+
+    /** @test */
+    public function a_product_can_be_added_by_authenticated_user()
     {
         $this->withoutExceptionHandling();
 
@@ -33,6 +54,8 @@ class FinancialProductsTest extends TestCase
     {
         foreach ($this->getFakeData() as $key => $value){
             $data = array_merge($this->getFakeData(), [$key => '']);
+
+            if($key == 'api_token') continue;
                                
             $response = $this->post('/api/financial_products', $data);
     
@@ -49,7 +72,8 @@ class FinancialProductsTest extends TestCase
  
         $product = FinancialProducts::factory()->create();
              
-        $response = $this->get('/api/financial_products/' . $product->id);
+        $response = $this->get('/api/financial_products/' . $product->id . '?api_token=' .
+            $this->user->api_token);
 
         $response->assertJsonFragment([
             'id' => $product->id,
@@ -84,7 +108,8 @@ class FinancialProductsTest extends TestCase
 
         $product = FinancialProducts::factory()->create();
 
-        $response = $this->delete('/api/financial_products/' . $product->id);
+        $response = $this->delete('/api/financial_products/' . $product->id, 
+            ['api_token' => $this->user->api_token]);
 
         $this->assertCount(0,FinancialProducts::all());
     }    
@@ -96,6 +121,7 @@ class FinancialProductsTest extends TestCase
             'description' => 'Titulo de fakaptalização',
             'minimum_value' => 555.22,
             'administration_fee' => 03.55,
+            'api_token' => $this->user->api_token
         ];
     }    
 
