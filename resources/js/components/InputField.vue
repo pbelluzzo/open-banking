@@ -3,6 +3,8 @@
         <label :for="cpf" class="text-red-300 pt-2 font-bold text-xs uppercase absolute">{{label}}</label>
         <input :id="cpf" type="text" class="pt-8 w-full border-b pb-2 focus:outline-none focus:border-red-400 text-gray-600"
         :placeholder="placeholder" v-model="value" @input="updateField()">
+
+        <p class="text-red-500 text-sm" v-text="errorMessage()">Error</p>
     </div>
 </template>
 
@@ -11,7 +13,7 @@ export default {
     name:"InputField",
 
     props: [
-        'name', 'label', 'placeholder'
+        'name', 'label', 'placeholder','errors'
     ],
 
     data: function () {
@@ -20,14 +22,35 @@ export default {
         }
     },
 
+    computed: {
+        hasError: function() {
+            return this.errors && this.errors[this.name] && this.errors[this.name].length > 0;
+        }
+    },
+
     methods: {
         updateField: function(){
+            this.clearErrors(this.name);
+
             this.$emit('update:field', this.value)
-        }
+        },
+
+        errorMessage: function() {
+            if (this.hasError){
+                return this.errors[this.name][0];
+            }
+        },
+
+        clearErrors: function () {
+            if (this.hasError){
+                this.errors[this.name] = null;
+            }
+        },
+
     },
 }
 </script>
 
 <style scoped>
 
-</style>
+</style>    

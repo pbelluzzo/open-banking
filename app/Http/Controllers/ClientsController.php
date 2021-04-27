@@ -34,7 +34,7 @@ class ClientsController extends Controller
             'cpf' => 'required|cpf',
             'name' => 'required',
             'address' => 'required',
-            'birthdate' => 'required'
+            'birthdate' => 'required|date_format:d/m/Y'
         ]);
     }
 }

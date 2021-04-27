@@ -1,14 +1,14 @@
 <template>
 
     <div>
-        <form>
-            <InputField name="cpf" label="CPF" placeholder="CPF do Cliente" @update:field="form.cpf = $event"/>
+        <form @submit.prevent="submitForm">
+            <InputField name="cpf" label="CPF" placeholder="CPF do Cliente" :errors="errors" @update:field="form.cpf = $event"/>
 
-            <InputField name="name" label="Nome" placeholder="Nome do Cliente" @update:field="form.name = $event"/>
+            <InputField name="name" label="Nome" placeholder="Nome do Cliente" :errors="errors" @update:field="form.name = $event"/>
 
-            <InputField name="address" label="Endereço" placeholder="Endereço do Cliente" @update:field="form.address = $event"/>
+            <InputField name="address" label="Endereço" placeholder="Endereço do Cliente" :errors="errors" @update:field="form.address = $event"/>
 
-            <InputField name="birthdate" label="Data de Nascimento" placeholder="dd/mm/aaaa" @update:field="form.birthdate = $event"/>
+            <InputField name="birthdate" label="Data de Nascimento" placeholder="dd/mm/aaaa" :errors="errors" @update:field="form.birthdate = $event"/>
 
             <div class="flex justify-end">
                 <button class="py-2 px-4 rounded border-2 hover:border-red-500 text-red-500 mr-5">Cancelar</button>
@@ -37,8 +37,22 @@
                     'name': '',
                     'address': '',
                     'birthdate': ''
-                }
+                },
+
+                errors: null,
             }
+        },
+
+        methods: {
+            submitForm: function() {
+                axios.post('/api/clients', this.form)
+                    .then(response => {
+                        
+                    })
+                    .catch(errors => {
+                        this.errors = errors.response.data.errors;
+                    });
+            },
         }
     }
 </script>

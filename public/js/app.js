@@ -1845,6 +1845,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 //
 //
 //
@@ -1896,7 +1902,18 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  name: "App"
+  name: "App",
+  props: ['user'],
+  mounted: function mounted() {
+    var _this = this;
+
+    window.axios.interceptors.request.use(function (config) {
+      config.data = _objectSpread(_objectSpread({}, config.data), {}, {
+        api_token: _this.user.api_token
+      });
+      return config;
+    });
+  }
 });
 
 /***/ }),
@@ -2143,17 +2160,35 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "InputField",
-  props: ['name', 'label', 'placeholder'],
+  props: ['name', 'label', 'placeholder', 'errors'],
   data: function data() {
     return {
       value: ''
     };
   },
+  computed: {
+    hasError: function hasError() {
+      return this.errors && this.errors[this.name] && this.errors[this.name].length > 0;
+    }
+  },
   methods: {
     updateField: function updateField() {
+      this.clearErrors(this.name);
       this.$emit('update:field', this.value);
+    },
+    errorMessage: function errorMessage() {
+      if (this.hasError) {
+        return this.errors[this.name][0];
+      }
+    },
+    clearErrors: function clearErrors() {
+      if (this.hasError) {
+        this.errors[this.name] = null;
+      }
     }
   }
 });
@@ -2206,8 +2241,18 @@ __webpack_require__.r(__webpack_exports__);
         'name': '',
         'address': '',
         'birthdate': ''
-      }
+      },
+      errors: null
     };
+  },
+  methods: {
+    submitForm: function submitForm() {
+      var _this = this;
+
+      axios.post('/api/clients', this.form).then(function (response) {})["catch"](function (errors) {
+        _this.errors = errors.response.data.errors;
+      });
+    }
   }
 });
 
@@ -38516,7 +38561,16 @@ var render = function() {
           }
         ]
       }
-    })
+    }),
+    _vm._v(" "),
+    _c(
+      "p",
+      {
+        staticClass: "text-red-500 text-sm",
+        domProps: { textContent: _vm._s(_vm.errorMessage()) }
+      },
+      [_vm._v("Error")]
+    )
   ])
 }
 var staticRenderFns = []
@@ -38545,9 +38599,22 @@ var render = function() {
   return _c("div", [
     _c(
       "form",
+      {
+        on: {
+          submit: function($event) {
+            $event.preventDefault()
+            return _vm.submitForm($event)
+          }
+        }
+      },
       [
         _c("InputField", {
-          attrs: { name: "cpf", label: "CPF", placeholder: "CPF do Cliente" },
+          attrs: {
+            name: "cpf",
+            label: "CPF",
+            placeholder: "CPF do Cliente",
+            errors: _vm.errors
+          },
           on: {
             "update:field": function($event) {
               _vm.form.cpf = $event
@@ -38559,7 +38626,8 @@ var render = function() {
           attrs: {
             name: "name",
             label: "Nome",
-            placeholder: "Nome do Cliente"
+            placeholder: "Nome do Cliente",
+            errors: _vm.errors
           },
           on: {
             "update:field": function($event) {
@@ -38572,7 +38640,8 @@ var render = function() {
           attrs: {
             name: "address",
             label: "Endereço",
-            placeholder: "Endereço do Cliente"
+            placeholder: "Endereço do Cliente",
+            errors: _vm.errors
           },
           on: {
             "update:field": function($event) {
@@ -38585,7 +38654,8 @@ var render = function() {
           attrs: {
             name: "birthdate",
             label: "Data de Nascimento",
-            placeholder: "dd/mm/aaaa"
+            placeholder: "dd/mm/aaaa",
+            errors: _vm.errors
           },
           on: {
             "update:field": function($event) {
