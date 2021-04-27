@@ -19,12 +19,10 @@
 
                             <div class="">
                                 <input id="login" type="login" class="pt-8 w-full rounded pt-4 p-3 bg-gray-100 text-gray-400 outline-none focus:bg-red-100" name="login" 
-                                value="{{ old('login') }}" required autocomplete="login" autofocus placeholder="digite seu login">
+                                value="{{ old('login') }}"  autocomplete="login" autofocus placeholder="login">
 
-                                @error('login')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
+                                @error('email')
+                                    <span class="text-red-500 text-sm" role="alert"> <strong>{{ $message }}</strong></span>
                                 @enderror
                             </div>
                         </div>
@@ -34,26 +32,20 @@
 
                             <div>
                                 <input id="password" type="password" class="pt-8 w-full rounded pt-4 p-3 bg-gray-100 text-gray-400 outline-none focus:bg-red-100" name="password" 
-                                required autocomplete="current-password" placeholder="senha">
+                                autocomplete="current-password" placeholder="senha">
 
                                 @error('password')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
+                                    <span class="text-red-500 text-sm" role="alert"><strong>{{ $message }}</strong></span>
                                 @enderror
                             </div>
                         </div>
 
-                        <div class="pt-2">
-                            <div>
-                                <div class="pl-3">
-                                    <input class="outline-none focus:bg-red-100" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
+                        <div class="pt-2 pl-3">
+                            <input class="outline-none focus:bg-red-100" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
 
-                                    <label class="text-gray-400" for="remember">
-                                        Continuar Conectado
-                                    </label>
-                                </div>
-                            </div>
+                                <label class="text-gray-400" for="remember">
+                                    Continuar Conectado
+                                </label>
                         </div>
 
                         <div class="pt-8 h-16">
@@ -64,11 +56,11 @@
 
                         <div class="flex justify-between pt-8 text-gray-400 font-bold">
                             <a class="hover:text-red-300" href="{{ route('password.request') }}">
-                                        Esqueceu sua senha?
+                                Esqueceu sua senha?
                             </a>
 
                             <a class="hover:text-red-300" href="{{ route('register') }}">
-                                        Cadastro
+                                Cadastro
                             </a>
                         </div>
                     </form>

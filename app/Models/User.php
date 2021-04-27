@@ -20,6 +20,7 @@ class User extends Authenticatable
         'email',
         'login',
         'password',
+        'api_token'
     ];
 
     /**
@@ -40,4 +41,9 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function entity()
+    {
+        return $this->morphTo();
+    }
 }

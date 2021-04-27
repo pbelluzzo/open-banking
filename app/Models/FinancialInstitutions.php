@@ -10,4 +10,9 @@ class FinancialInstitutions extends Model
     use HasFactory;
 
     protected $guarded = [];
+
+    public function user()
+    {
+        return $this->morphMany(User::class, 'entity');
+    }
 }

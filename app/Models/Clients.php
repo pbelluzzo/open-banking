@@ -21,4 +21,9 @@ class Clients extends Model
         $this->attributes['birthdate'] = Carbon::createFromFormat('d/m/Y', $birthdate);
     }
 
+    public function user()
+    {
+        return $this->morphOne(User::class, 'entity');
+    }
+
 }
