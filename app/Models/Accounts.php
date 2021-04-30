@@ -15,4 +15,18 @@ class Accounts extends Model
         'balance' => 'float'
     ];
 
+    public function financialInstitutions()
+    {
+        return $this->belongsTo(FinancialInstitutions::class);
+    }
+
+    public function clients()
+    {
+        return $this->belongsTo(Clients::class);
+    }
+
+    public function contracts()
+    {
+        return $this->hasMany(Contracts::class);
+    }
 }

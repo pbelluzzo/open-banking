@@ -13,6 +13,22 @@ class FinancialInstitutions extends Model
 
     public function user()
     {
-        return $this->morphMany(User::class, 'entity');
+        return $this->morphOne(User::class, 'entity');
     }
+
+    public function contracts()
+    {
+        return $this->hasMany(Contracts::class);
+    }
+
+    public function accounts()
+    {
+        return $this->hasMany(Accounts::class);
+    }
+
+    public function financialProducts()
+    {
+        return $this->hasMany(FinancialProducts::class);
+    }
+
 }

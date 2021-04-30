@@ -22,8 +22,8 @@ class AccountsFactory extends Factory
     public function definition()
     {
         return [
-            'client_id' => '1',
-            'institution_id' => '1',
+            'clients_id' => '1',
+            'financial_institutions_id' => '1',
             'balance' => (float)(random_int(10000,999999)/100),
             'ended_in' => null
         ];

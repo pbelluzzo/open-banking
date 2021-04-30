@@ -15,8 +15,8 @@ class CreateAccountsTable extends Migration
     {
         Schema::create('accounts', function (Blueprint $table) {
             $table->id();
-            $table->string('client_id')->references('id')->on('clients');
-            $table->string('institution_id')->references('id')->on('financial_institutions');
+            $table->string('clients_id')->references('id')->on('clients');
+            $table->string('financial_institutions_id')->references('id')->on('financial_institutions');
             $table->decimal('balance',15,2);            
             $table->timestamps();
             $table->dateTime('ended_in')->nullable();

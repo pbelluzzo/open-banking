@@ -28,4 +28,14 @@ class Contracts extends Model
     {
         $this->attributes['hiring_date'] = Carbon::createFromFormat('d/m/Y', $hiring_date);
     }
+
+    public function accounts()
+    {
+        return $this->belongsTo(Accounts::class);
+    }
+
+    public function financialProducts()
+    {
+        return $this->hasOne(FinancialProducts::class);
+    }
 }

@@ -7,7 +7,9 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Carbon\Carbon;
 use Tests\TestCase;
 use App\Models\Clients;
+use App\Models\FinancialInstitutions;
 use App\Models\User;
+use App\Models\Accounts;
 
 class ClientsTest extends TestCase
 {
@@ -20,7 +22,6 @@ class ClientsTest extends TestCase
         parent::setUp();
 
         $this->user = User::factory()->create();
-
     }
 
     /** @test */
@@ -34,19 +35,92 @@ class ClientsTest extends TestCase
     }
 
     /** @test */
+    public function a_list_of_clients_can_be_recovered_by_the_institution_user()
+    {
+        $this->withoutExceptionHandling();
+
+        $institution = FinancialInstitutions::factory()->create();
+        $institution2 = FinancialInstitutions::factory()->create();
+
+        $client = Clients::factory()->create();
+        $client2 = Clients::factory()->create();
+
+        $account = Accounts::factory()->create(
+            [
+                'clients_id' => $client->id,
+                'financial_institutions_id' => $institution->id,
+            ]);      
+        $account2 = Accounts::factory()->create(
+            [
+                'clients_id' => $client->id,
+                'financial_institutions_id' => $institution2->id,
+            ]);
+        $account3 = Accounts::factory()->create(
+            [
+                'clients_id' => $client2->id,
+                'financial_institutions_id' => $institution2->id,
+            ]);    
+        
+        $user = User::factory()->create(
+            [
+            'entity_type' => 'App\Models\FinancialInstitutions',
+            'entity_id' => 1
+            ]);
+        $anotherUser = User::factory()->create(
+            [
+                'entity_type' => 'App\Models\Clients',
+                'entity_id' => 1
+            ]);
+
+        $response = $this->get('/api/clients?api_token=' . $user->api_token);
+
+        $response->assertJsonCount(1)->assertJson([
+            'data' => [
+                [
+                    "data" => [
+                        'id' => $client->id,
+                    ]
+                ]
+            ]
+        ]);
+    }
+
+    /** @test */
+    public function a_client_cannot_recover_a_list_of_clients()
+    {
+        $client = Clients::factory()->create();
+        $anotherUser = User::factory()->create(
+            [
+                'entity_type' => 'App\Models\Clients',
+                'entity_id' => 1
+            ]);
+        $response = $this->get('/api/clients?api_token=' . $anotherUser->api_token);
+        
+        $response->assertStatus(403);
+    }
+    
+    /** @test */
     public function a_client_can_be_added_by_authenticated_user()
     {
         $this->withoutExceptionHandling();
+
+        $response = $this->post('/api/clients', $this->getFakeData());
         
-
-        $this->post('/api/clients', $this->getFakeData());
-
         $client = Clients::first();
-
+        
         $this->assertEquals('526.683.577-05', $client->cpf);
         $this->assertEquals('Test Name', $client->name);
         $this->assertEquals('Rua teste, nº teste', $client->address);
-        $this->assertEquals('15/01/1999',$client->birthdate->format('d/m/Y'));
+        $this->assertEquals('15/01/1999',$client->birthdate);
+        $response->assertStatus(201);
+        $response->assertJson([
+            'data' => [
+                'id' => $client->id
+            ],
+            'links' => [
+                'self' => url('/clients/' . $client->id)
+            ]
+        ]);
     }
 
     /** @test */
@@ -54,48 +128,59 @@ class ClientsTest extends TestCase
     {
         foreach ($this->getFakeData() as $key => $value){
             $data = array_merge($this->getFakeData(), [$key => '']);
-           
+            
             if($key == 'api_token') continue;
             
             $response = $this->post('/api/clients', $data);
-
+            
             $response->assertSessionHasErrors($key);
         }
         
-            $this->assertCount(0, Clients::all());
+        $this->assertCount(0, Clients::all());
     }
-
+    
     /** @test */
     public function cpf_must_be_valid()
     {
         $response = $this->post('/api/clients', 
-            array_merge($this->getFakeData(),['cpf' => '000.000.000.00']));
-
+        array_merge($this->getFakeData(),['cpf' => '000.000.000.00']));
+        
         $response->assertSessionHasErrors('cpf');
-
+        
         $this->assertCount(0,Clients::all());
     }
 
     /** @test */
-    public function birthdate_follows_ISO8601()
+    public function a_client_cannot_recover_a_client()
+    {
+        $client = Clients::factory()->create();
+        $client2 = Clients::factory()->create();
+        $anotherUser = User::factory()->create(
+            [
+                'entity_type' => 'App\Models\Clients',
+                'entity_id' => 1
+            ]);
+        
+        $response = $this->get('/api/clients/' . $client2->id . '?api_token=' . $anotherUser->api_token);
+        
+        $response->assertStatus(403);
+    }    
+
+    /** @test */
+    public function a_client_can_be_recovered_by_institution_user()
     {
         $this->withoutExceptionHandling();
 
-        $response = $this->post( '/api/clients',
-            array_merge($this->getFakeData(),['birthdate' => '15/01/1999']));
-
-        $this->assertCount(1, Clients::all());
-        $this->assertInstanceOf(Carbon::class, Clients::first()->birthdate);
-        $this->assertEquals('1999-01-15', Clients::first()->birthdate->format('Y-m-d'));
-    }
-
-    /** @test */
-    public function a_client_can_be_recovered()
-    {
         $client = Clients::factory()->create();
-        
+        $institution = FinancialInstitutions::factory()->create();
+        $anotherUser = User::factory()->create(
+            [
+                'entity_type' => 'App\Models\FinancialInstitutions',
+                'entity_id' => 1
+            ]
+        );        
         $response = $this->get('/api/clients/' . $client->id . 
-            '?api_token=' . $this->user->api_token);
+            '?api_token=' . $anotherUser->api_token);
 
         $response->assertJsonFragment([
             'id' => $client->id,
@@ -120,7 +205,16 @@ class ClientsTest extends TestCase
         $this->assertEquals('526.683.577-05', $client->cpf);
         $this->assertEquals('Test Name', $client->name);
         $this->assertEquals('Rua teste, nº teste', $client->address);
-        $this->assertEquals('15/01/1999',$client->birthdate->format('d/m/Y'));
+        $this->assertEquals('15/01/1999',$client->birthdate);
+        $response->assertStatus(200);
+        $response->assertJson( [
+            'data' => [
+                'id' => $client->id,
+            ],
+            'links' => [
+                'self' => $client->path(),
+            ]
+        ]);
     }
 
     /** @test */
@@ -150,6 +244,7 @@ class ClientsTest extends TestCase
             ['api_token' => $this->user->api_token]);
 
         $this->assertCount(0,Clients::all());
+        $response->assertStatus(204);
     }
 
     private function getFakeData()

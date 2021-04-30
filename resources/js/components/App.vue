@@ -14,7 +14,7 @@
                     <router-link to="/clients/create">
                         <p class="pl-8 text-red-300 font-light">Adicionar Cliente</p>
                     </router-link>
-                    <router-link to="/">
+                    <router-link to="/clients">
                         <p class="pl-8 text-red-300 font-light">Buscar Cliente</p>
                     </router-link>
 
@@ -33,9 +33,7 @@
                     <div>
                         Test Institution
                     </div>
-                    <div class="rounded-full border border-gray-300 text-white bg-red-300 w-10 h-10 flex items-center justify-center">
-                        TI
-                    </div>
+                    <UserCircle :name="user.login" />
                 </div>
                 
                 <div class="flex flex-col overflow-y-hidden flex-1">
@@ -49,6 +47,7 @@
 </template>
 
 <script>
+    import UserCircle from './UserCircle';
 
     export default {
         name : "App",
@@ -57,14 +56,21 @@
             'user'
         ],
 
-        mounted() {
+        components: {
+            UserCircle,
+        },
+
+        created() {
             window.axios.interceptors.request.use(
                 (config) => {
-                    config.data = {
+                    if (config.method === 'get') {
+                        config.url = config.url + '?api_token=' + this.user.api_token
+                    }else {
+                        config.data = {
                         ...config.data,
                         api_token: this.user.api_token
                     };
-
+                    }
                     return config;
                 }
             )

@@ -3,29 +3,75 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Builder;
 use App\Models\Clients;
+use App\Http\Resources\Clients as ClientsResource;
+
 use DateTime;
 
 class ClientsController extends Controller
 {
+    public function index()
+    {  
+        if ($this->requestUserIsClient()) {
+            return response([], 403);
+        };
+        
+        $clients = Clients::whereHas('accounts', function (Builder $query) {
+            $query->where('accounts.financial_institutions_id', '=', request()->user()->entity->id);
+        })->get();
+
+        return ClientsResource::collection($clients);
+
+        // return ClientsResource::collection
+        // (
+        //     DB::table('financial_institutions')
+        //         ->join('accounts', 'financial_institutions.id', '=', 'accounts.financial_institutions_id')
+        //         ->join('clients', 'accounts.clients_id', '=', 'clients.id')
+        //         ->select('clients.*')
+        //         ->where('financial_institutions.id', '=', $institutionId)
+        //         ->get()
+        // );
+    }
+
     public function store()
     {
-        Clients::create($this->validateData());
+        $client = Clients::create($this->validateData());
+
+        return (new ClientsResource($client))
+            ->response()
+            ->setStatusCode(201);
     }
     
     public function show(Clients $client)
     {
-        return $client;
+        if ($this->requestUserIsClient()) {
+           return response([], 403);
+        };
+
+        return new ClientsResource($client);
     }
     
     public function update(Clients $client)
     {
         $client->update($this->validateData());
+
+        return (new ClientsResource($client))
+            ->response()
+            ->setStatusCode(200);
     }
 
     public function destroy(Clients $client)
     {
         $client->delete();
+
+        return response([], 204);
+    }
+
+    private function requestUserIsClient()
+    {
+        return get_class(request()->user()->entity) == 'App\Models\Clients';
     }
 
     private function validateData()

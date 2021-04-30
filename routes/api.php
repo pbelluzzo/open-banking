@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:api')->group(function() {
     
+    Route::get('/clients', 'ClientsController@index');
     Route::post('/clients', 'ClientsController@store');
     Route::get('/clients/{client}', 'ClientsController@show');
     Route::patch('/clients/{client}', 'ClientsController@update');

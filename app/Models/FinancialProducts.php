@@ -15,4 +15,14 @@ class FinancialProducts extends Model
         'minimum_value' => 'float',
         'administration_fee' => 'float'
     ];
+
+    public function contracts()
+    {
+        return $this->belongsTo(Contracts::class);
+    }
+
+    public function financialInstitutions()
+    {
+        return $this->belongsTo(FinancialInstitutions::class);
+    }
 }

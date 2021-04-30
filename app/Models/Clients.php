@@ -16,6 +16,17 @@ class Clients extends Model
 
     protected $guarded = [];
 
+    public function path()
+    {
+        return '/clients/' . $this->id;
+    }
+
+    public function getBirthdateAttribute($birthdate)
+    {
+        $newBirthdate = Carbon::parse($birthdate);
+        return $newBirthdate->format('d/m/Y');
+    }
+
     public function setBirthdateAttribute($birthdate)
     {
         $this->attributes['birthdate'] = Carbon::createFromFormat('d/m/Y', $birthdate);
@@ -24,6 +35,11 @@ class Clients extends Model
     public function user()
     {
         return $this->morphOne(User::class, 'entity');
+    }
+
+    public function accounts()
+    {
+        return $this->hasOne(Accounts::class);
     }
 
 }
