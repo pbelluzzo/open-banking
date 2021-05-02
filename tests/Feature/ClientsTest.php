@@ -113,7 +113,7 @@ class ClientsTest extends TestCase
         $this->assertEquals('Rua teste, nº teste', $client->address);
         $this->assertEquals('15/01/1999',$client->birthdate);
         $response->assertStatus(201);
-        $response->assertJson([
+        $response->assertJsonFragment([
             'data' => [
                 'id' => $client->id
             ],
@@ -121,6 +121,7 @@ class ClientsTest extends TestCase
                 'self' => url('/clients/' . $client->id)
             ]
         ]);
+
     }
 
     /** @test */

@@ -1,0 +1,36 @@
+Test database queries:
+
+INSERT INTO users
+(login,password,email,entity_type,entity_id,active,remember_token,api_token,created_at,updated_at)
+VALUES
+('testInstitution','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi','test@email.com',
+'App\\Models\\FinancialInstitutions','1',1,'eSphhJRfoQ','RzPLTI7vlSZlilv0cFzJ29uZBsXRdKd55',
+'2021-04-30','2021-04-30');
+
+INSERT INTO users
+(login,password,email,entity_type,entity_id,active,remember_token,api_token,created_at,updated_at)
+VALUES
+('testClient','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi','testClient@email.com',
+'App\\Models\\Clients','1',1,'eSphhJRfoQ','RzPLTI7vlSZlilv0cFzJ29uZBsXRdKd55',
+'2021-04-30','2021-04-30');
+
+INSERT INTO financial_institutions
+(cnpj,company_name,fantasy_name,bank_code,logo_path,created_at,updated_at)
+VALUES
+(91602457000121, 'Test Company Ltda', 'Companhia de testes tops', '0320','','2021-04-30', '2021-04-30');
+
+INSERT INTO financial_institutions
+(cnpj,company_name,fantasy_name,bank_code,logo_path,created_at,updated_at)
+VALUES
+(58684930000191, 'Banco do Dinheiro Alheio Ltda', 'WWYM Bank - We Want Your Money', '0770','','2021-04-30', '2021-04-30');
+
+INSERT INTO financial_institutions
+(cnpj,company_name,fantasy_name,bank_code,logo_path,created_at,updated_at)
+VALUES
+(14323888000108, 'Banco do Brazuka', 'Banco dos Brazukas', '0001','','2021-04-30', '2021-04-30');
+
+
+
+
+
+

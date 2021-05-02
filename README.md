@@ -10,15 +10,42 @@ https://docs.docker.com/get-docker/
 
 https://docs.github.com/pt/github/creating-cloning-and-archiving-repositories/cloning-a-repository
 
-# 3 - Suba o docker Sail. A partir da pasta raiz do projeto:
+# 3 - Faça uma cópia do arquivo .env.example e renomeie como .env
+
+# 4 - Use o comando a seguir para instalar as dependencias via composer
+    docker run --rm -v $(pwd):/opt -w /opt laravelsail/php80-composer:latest composer install
+
+# 5 - Suba o docker Sail. A partir da pasta raiz do projeto:
     vendor/bin/sail up
 
+# 6 - Utilize o comando para entrar no container docker:
+    docker-compose exec laravel.test bash
 
-# 4 - Dentro do sail, execute:
-    - composer install
+# 7 - Utilize o comando para gerar a chave do aplicativo:
+    php artisan key:generate
 
-# 5 - Faça uma cópia do arquivo .env.example e faça a configuração do banco de dados.
+# 8 - Use o comando a seguir para instalar as dependencias via npm
+    npm install
 
-# 6 - Dentro da raiz do projeto, use o comando para rodar as migrations:
-    vendor/bin/sail artisan migrate
+# 9 - Utilize o comando a seguir para processar as instruções do webpack.mix
+    npm run dev
 
+# 10 - Utilize o comando a seguir para rastrear as mudanças nos arquivos do frontend
+    npm run watch-poll
+
+# 11 - Dentro da raiz do projeto, use o comando para rodar as migrations:
+    php artisan migrate
+
+# 12 - Use o arquivo de texto dbexample, presente na pasta raiz do projeto, para criar os dados de teste no banco de dados.
+
+# 13 - Ao acessar a aplicação, faça login usando o usuário testInstitution, com a senha "password". A interface de clientes não foi implementada.
+
+
+# ---------------------------------------------------------------------------------------------------
+
+# Para rodar os feature tests, utilize o seguinte comando na pasta raiz do projeto:
+    vendor/bin/sail artisan test
+
+    Opcionalmente, use o parametro --filter ao final para filtrar o teste ou entidade de testes a ser executado.
+
+    vendor/bin/sail artisan test --filter ClientsTest
