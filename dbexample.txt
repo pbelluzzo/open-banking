@@ -29,8 +29,28 @@ INSERT INTO financial_institutions
 VALUES
 (14323888000108, 'Banco do Brazuka', 'Banco dos Brazukas', '0001','','2021-04-30', '2021-04-30');
 
+INSERT INTO accounts
+(id,clients_id,financial_institutions_id,balance,created_at,updated_at,ended_in)
+VALUES
+(1,1,1,779,30,'2021-04-30','2021-04-30',null);
 
+INSERT INTO accounts
+(id,clients_id,financial_institutions_id,balance,created_at,updated_at,ended_in)
+VALUES
+(2,2,1,279.30,'2021-04-30','2021-04-30',null);
 
+INSERT INTO clients
+(id,cpf,name,address,birthdate,created_at,updated_at)
+VALUES
+(1,'08984618551','José da Silva','Rua da Samambaia, n 10', '1995-11-12','2021-04-30','2021-04-30');
 
+INSERT INTO clients
+(id,cpf,name,address,birthdate,created_at,updated_at)
+VALUES
+(2,'39686763511','Silvia Santos','Rua do Alambique, n 123', '1999-06-12','2021-04-30','2021-04-30');
 
+INSERT INTO financial_products
+(id,financial_institutions_id,description,minimum_value,administration_fee,created_at,updated_at)
+VALUES
+(100000,1,'Titulo de Captrouxalização',155.30, 5.55,'2021-04-30','2021-04-30');
 
