@@ -22,6 +22,11 @@ class Sharings extends Model
         'destiny_institution_id' => 'integer'
     ];
 
+    public function path()
+    {
+        return '/sharings/' . $this->id;
+    }    
+
     public function setAcceptanceDateAttribute($acceptance_date)
     {
         if($acceptance_date == '') 

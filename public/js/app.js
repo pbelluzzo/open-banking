@@ -1,6 +1,17 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "./node_modules/@babel/runtime/regenerator/index.js":
+/*!**********************************************************!*\
+  !*** ./node_modules/@babel/runtime/regenerator/index.js ***!
+  \**********************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+module.exports = __webpack_require__(/*! regenerator-runtime */ "./node_modules/regenerator-runtime/runtime.js");
+
+
+/***/ }),
+
 /***/ "./node_modules/axios/index.js":
 /*!*************************************!*\
   !*** ./node_modules/axios/index.js ***!
@@ -2530,6 +2541,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "AccountsShow",
   components: {},
@@ -2548,10 +2564,19 @@ __webpack_require__.r(__webpack_exports__);
     });
     axios.get('/api/clients').then(function (response) {
       _this.clients = response.data.data;
-      _this.loading = false;
     })["catch"](function (error) {
       _this.loading = false;
       alert('Não foi possível buscar os clientes associados às contas');
+    });
+    axios.get('/api/contracts').then(function (response) {
+      _this.contracts = response.data.data;
+
+      _this.searchContracts();
+
+      _this.loading = false;
+    })["catch"](function (error) {
+      _this.loading = false;
+      alert('Não foi possível buscar os contratos associados às contas');
     });
   },
   data: function data() {
@@ -2559,16 +2584,26 @@ __webpack_require__.r(__webpack_exports__);
       loading: true,
       account: null,
       clients: null,
-      contracts: null
+      contracts: null,
+      accountContracts: []
     };
   },
   methods: {
     searchClient: function searchClient($account) {
-      if (this.clients.length == null) return;
-
       for (var i = 0; i < this.clients.length; i++) {
         if (this.clients[i].data.id == $account.clients_id) {
           return this.clients[i];
+        }
+
+        ;
+      }
+
+      ;
+    },
+    searchContracts: function searchContracts() {
+      for (var i = 0; i < this.contracts.length; i++) {
+        if (this.contracts[i].data.accounts_id == this.account.id) {
+          this.accountContracts.push(this.contracts[i]);
         }
 
         ;
@@ -2799,6 +2834,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "FinancialProductsIndex",
@@ -2898,6 +2935,275 @@ __webpack_require__.r(__webpack_exports__);
     return {
       loading: true,
       client: null
+    };
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/views/ContractsCreate.vue?vue&type=script&lang=js&":
+/*!*****************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/views/ContractsCreate.vue?vue&type=script&lang=js& ***!
+  \*****************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _components_InputField__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../components/InputField */ "./resources/js/components/InputField.vue");
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  name: "ContractsCreate",
+  props: ['user'],
+  components: {
+    InputField: _components_InputField__WEBPACK_IMPORTED_MODULE_0__.default
+  },
+  data: function data() {
+    return {
+      form: {
+        'accounts_id': '',
+        'financial_products_id': '',
+        'amount_invested': '',
+        'administration_fee': '',
+        'hiring_date': '',
+        'finished': '0'
+      },
+      step: 0,
+      products: null,
+      accounts: null,
+      errors: null
+    };
+  },
+  mounted: function mounted() {
+    var _this = this;
+
+    axios.get('/api/financial_products').then(function (response) {
+      _this.products = response.data.data;
+    })["catch"](function (error) {
+      alert('Não foi possível buscar os produtos financeiros');
+
+      _this.$router.push('/accounts');
+    });
+    axios.get('/api/accounts').then(function (response) {
+      _this.accounts = response.data.data;
+
+      _this.iterateStep();
+    })["catch"](function (error) {
+      alert('Não foi possível buscar as contas');
+
+      _this.$router.push('/accounts');
+    });
+  },
+  methods: {
+    submitForm: function submitForm() {
+      var _this2 = this;
+
+      axios.post('/api/contracts', this.form).then(function (response) {
+        _this2.$router.push(response.data.links.self);
+      })["catch"](function (errors) {
+        _this2.errors = errors.response.data.errors;
+      });
+    },
+    iterateStep: function iterateStep() {
+      this.step++;
+    },
+    selectProduct: function selectProduct($product) {
+      this.form.financial_products_id = $product.data.id;
+      this.form.administration_fee = $product.data.administration_fee;
+      this.iterateStep();
+    },
+    selectAccount: function selectAccount($account) {
+      this.form.accounts_id = $account.data.id;
+      this.iterateStep();
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/views/ContractsIndex.vue?vue&type=script&lang=js&":
+/*!****************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/views/ContractsIndex.vue?vue&type=script&lang=js& ***!
+  \****************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  name: "ContractsIndex",
+  components: {},
+  mounted: function mounted() {
+    var _this = this;
+
+    axios.get('/api/contracts').then(function (response) {
+      _this.contracts = response.data.data;
+      _this.loading = false;
+    })["catch"](function (error) {
+      _this.loading = false;
+      alert('Não foi possível buscar os contratos');
+    });
+  },
+  data: function data() {
+    return {
+      loading: true,
+      contracts: null
+    };
+  },
+  methods: {}
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/views/ContractsShow.vue?vue&type=script&lang=js&":
+/*!***************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/views/ContractsShow.vue?vue&type=script&lang=js& ***!
+  \***************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  name: "ContractsShow",
+  components: {},
+  props: ['user'],
+  mounted: function mounted() {
+    var _this = this;
+
+    axios.get('/api/contracts/' + this.$route.params.id).then(function (response) {
+      _this.contract = response.data.data;
+      _this.loading = false;
+    })["catch"](function (error) {
+      _this.loading = false;
+
+      if (error.response.status === 404) {
+        _this.$router.push('/contracts');
+      }
+    });
+  },
+  data: function data() {
+    return {
+      loading: true,
+      contract: null
     };
   }
 });
@@ -3182,6 +3488,384 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/views/SharingsCreate.vue?vue&type=script&lang=js&":
+/*!****************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/views/SharingsCreate.vue?vue&type=script&lang=js& ***!
+  \****************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _components_InputField__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../components/InputField */ "./resources/js/components/InputField.vue");
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  name: "SharingsCreate",
+  props: ['user'],
+  components: {
+    InputField: _components_InputField__WEBPACK_IMPORTED_MODULE_0__.default
+  },
+  data: function data() {
+    return {
+      form: {
+        'clients_id': '',
+        'origin_institution_id': '',
+        'destiny_institution_id': this.user.entity_id,
+        'acceptance_date': '',
+        'xml_path': ''
+      },
+      step: 0,
+      clients: null,
+      institutions: null,
+      errors: null
+    };
+  },
+  mounted: function mounted() {
+    var _this = this;
+
+    axios.get('/api/clients').then(function (response) {
+      _this.clients = response.data.data;
+    })["catch"](function (error) {
+      alert('Não foi possível buscar os clients');
+      _this.loading = false;
+
+      _this.$router.push('/sharings');
+    });
+    axios.get('/api/financial_institutions').then(function (response) {
+      _this.institutions = response.data.data;
+      _this.loading = false;
+
+      _this.iterateStep();
+    })["catch"](function (error) {
+      alert('Não foi possível buscar as instituições');
+      _this.loading = false;
+
+      _this.$router.push('/sharings');
+    });
+  },
+  methods: {
+    submitForm: function submitForm() {
+      var _this2 = this;
+
+      axios.post('/api/sharings', this.form).then(function (response) {
+        _this2.$router.push(response.data.links.self);
+      })["catch"](function (errors) {
+        _this2.errors = errors.response.data.errors;
+      });
+    },
+    iterateStep: function iterateStep() {
+      this.step++;
+    },
+    selectClient: function selectClient($client) {
+      this.form.clients_id = $client.data.id;
+      this.iterateStep();
+    },
+    selectInstitution: function selectInstitution($institution) {
+      this.form.origin_institution_id = $institution.data.id;
+      this.iterateStep();
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/views/SharingsIndex.vue?vue&type=script&lang=js&":
+/*!***************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/views/SharingsIndex.vue?vue&type=script&lang=js& ***!
+  \***************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  name: "SharingsIndex",
+  components: {},
+  mounted: function mounted() {
+    var _this = this;
+
+    axios.get('/api/sharings').then(function (response) {
+      _this.sharings = response.data.data;
+    })["catch"](function (error) {
+      _this.loading = false;
+      alert('Não foi possível buscar os compartilhamentos');
+    });
+    axios.get('/api/financial_institutions').then(function (response) {
+      _this.institutions = response.data.data;
+    })["catch"](function (error) {
+      _this.loading = false;
+      alert('Não foi possível buscar as institutições associadas aos compartilhamentos');
+    });
+    axios.get('/api/clients').then(function (response) {
+      _this.clients = response.data.data;
+      _this.loading = false;
+    })["catch"](function (error) {
+      _this.loading = false;
+      alert('Não foi possível buscar os clientes associados aos compartilhamentos');
+    });
+  },
+  data: function data() {
+    return {
+      loading: true,
+      sharings: null,
+      institutions: null,
+      clients: null
+    };
+  },
+  methods: {
+    searchClient: function searchClient($sharing) {
+      for (var i = 0; i < this.clients.length; i++) {
+        if (this.clients[i].data.id == $sharing.data.clients_id) {
+          return this.clients[i];
+        }
+
+        ;
+      }
+
+      ;
+    },
+    searchInstitution: function searchInstitution($sharing) {
+      for (var i = 0; i < this.institutions.length; i++) {
+        if (this.institutions[i].data.id == $sharing.data.origin_institution_id) {
+          return this.institutions[i];
+        }
+
+        ;
+      }
+
+      ;
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/views/SharingsShow.vue?vue&type=script&lang=js&":
+/*!**************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/views/SharingsShow.vue?vue&type=script&lang=js& ***!
+  \**************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  name: "SharingsShow",
+  components: {},
+  props: ['user'],
+  mounted: function mounted() {
+    var _this = this;
+
+    axios.get('/api/sharings/' + this.$route.params.id).then(function (response) {
+      _this.sharing = response.data.data;
+
+      _this.getInstitution().then(function (response) {
+        _this.getClient().then(function (response) {
+          _this.checkPersistance();
+
+          _this.loading = false;
+        })["catch"](function (error) {
+          _this.loading = false;
+        });
+      })["catch"](function (error) {});
+    })["catch"](function (error) {
+      _this.loading = false;
+
+      if (error.response.status === 404) {
+        _this.$router.push('/sharings');
+      }
+    });
+  },
+  data: function data() {
+    return {
+      loading: true,
+      client: null,
+      institution: null,
+      sharing: null,
+      persisted: ''
+    };
+  },
+  methods: {
+    getInstitution: function getInstitution() {
+      var _this2 = this;
+
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                axios.get('/api/financial_institutions/' + _this2.sharing.origin_institution_id).then(function (response) {
+                  _this2.institution = response.data.data;
+                })["catch"](function (error) {});
+
+              case 1:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee);
+      }))();
+    },
+    getClient: function getClient() {
+      var _this3 = this;
+
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2() {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                axios.get('/api/clients/' + _this3.sharing.clients_id).then(function (response) {
+                  _this3.client = response.data.data;
+                })["catch"](function (error) {});
+
+              case 1:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2);
+      }))();
+    },
+    checkPersistance: function checkPersistance() {
+      console.log('called');
+      this.persisted = this.sharing.acceptance_date != null;
+    }
+  }
+});
+
+/***/ }),
+
 /***/ "./resources/js/app.js":
 /*!*****************************!*\
   !*** ./resources/js/app.js ***!
@@ -3267,8 +3951,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
-/* harmony import */ var vue_router__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! vue-router */ "./node_modules/vue-router/dist/vue-router.esm.js");
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
+/* harmony import */ var vue_router__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! vue-router */ "./node_modules/vue-router/dist/vue-router.esm.js");
 /* harmony import */ var _components_ExampleComponent__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./components/ExampleComponent */ "./resources/js/components/ExampleComponent.vue");
 /* harmony import */ var _views_ClientsCreate__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./views/ClientsCreate */ "./resources/js/views/ClientsCreate.vue");
 /* harmony import */ var _views_ClientsShow__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./views/ClientsShow */ "./resources/js/views/ClientsShow.vue");
@@ -3281,6 +3965,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _views_AccountsIndex__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./views/AccountsIndex */ "./resources/js/views/AccountsIndex.vue");
 /* harmony import */ var _views_AccountsShow__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./views/AccountsShow */ "./resources/js/views/AccountsShow.vue");
 /* harmony import */ var _views_AccountsEdit__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./views/AccountsEdit */ "./resources/js/views/AccountsEdit.vue");
+/* harmony import */ var _views_ContractsCreate__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./views/ContractsCreate */ "./resources/js/views/ContractsCreate.vue");
+/* harmony import */ var _views_ContractsShow__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./views/ContractsShow */ "./resources/js/views/ContractsShow.vue");
+/* harmony import */ var _views_ContractsIndex__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./views/ContractsIndex */ "./resources/js/views/ContractsIndex.vue");
+/* harmony import */ var _views_SharingsCreate__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./views/SharingsCreate */ "./resources/js/views/SharingsCreate.vue");
+/* harmony import */ var _views_SharingsIndex__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./views/SharingsIndex */ "./resources/js/views/SharingsIndex.vue");
+/* harmony import */ var _views_SharingsShow__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./views/SharingsShow */ "./resources/js/views/SharingsShow.vue");
 
 
 
@@ -3295,8 +3985,14 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-vue__WEBPACK_IMPORTED_MODULE_12__.default.use(vue_router__WEBPACK_IMPORTED_MODULE_13__.default);
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (new vue_router__WEBPACK_IMPORTED_MODULE_13__.default({
+
+
+
+
+
+
+vue__WEBPACK_IMPORTED_MODULE_18__.default.use(vue_router__WEBPACK_IMPORTED_MODULE_19__.default);
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (new vue_router__WEBPACK_IMPORTED_MODULE_19__.default({
   mode: 'history',
   routes: [{
     path: '/',
@@ -3334,6 +4030,24 @@ vue__WEBPACK_IMPORTED_MODULE_12__.default.use(vue_router__WEBPACK_IMPORTED_MODUL
   }, {
     path: '/accounts/:id/edit',
     component: _views_AccountsEdit__WEBPACK_IMPORTED_MODULE_11__.default
+  }, {
+    path: '/contracts',
+    component: _views_ContractsIndex__WEBPACK_IMPORTED_MODULE_14__.default
+  }, {
+    path: '/contracts/create',
+    component: _views_ContractsCreate__WEBPACK_IMPORTED_MODULE_12__.default
+  }, {
+    path: '/contracts/:id',
+    component: _views_ContractsShow__WEBPACK_IMPORTED_MODULE_13__.default
+  }, {
+    path: '/sharings/create',
+    component: _views_SharingsCreate__WEBPACK_IMPORTED_MODULE_15__.default
+  }, {
+    path: '/sharings',
+    component: _views_SharingsIndex__WEBPACK_IMPORTED_MODULE_16__.default
+  }, {
+    path: '/sharings/:id',
+    component: _views_SharingsShow__WEBPACK_IMPORTED_MODULE_17__.default
   }]
 }));
 
@@ -38735,6 +39449,764 @@ process.umask = function() { return 0; };
 
 /***/ }),
 
+/***/ "./node_modules/regenerator-runtime/runtime.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/regenerator-runtime/runtime.js ***!
+  \*****************************************************/
+/***/ ((module) => {
+
+/**
+ * Copyright (c) 2014-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+var runtime = (function (exports) {
+  "use strict";
+
+  var Op = Object.prototype;
+  var hasOwn = Op.hasOwnProperty;
+  var undefined; // More compressible than void 0.
+  var $Symbol = typeof Symbol === "function" ? Symbol : {};
+  var iteratorSymbol = $Symbol.iterator || "@@iterator";
+  var asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator";
+  var toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag";
+
+  function define(obj, key, value) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+    return obj[key];
+  }
+  try {
+    // IE 8 has a broken Object.defineProperty that only works on DOM objects.
+    define({}, "");
+  } catch (err) {
+    define = function(obj, key, value) {
+      return obj[key] = value;
+    };
+  }
+
+  function wrap(innerFn, outerFn, self, tryLocsList) {
+    // If outerFn provided and outerFn.prototype is a Generator, then outerFn.prototype instanceof Generator.
+    var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator;
+    var generator = Object.create(protoGenerator.prototype);
+    var context = new Context(tryLocsList || []);
+
+    // The ._invoke method unifies the implementations of the .next,
+    // .throw, and .return methods.
+    generator._invoke = makeInvokeMethod(innerFn, self, context);
+
+    return generator;
+  }
+  exports.wrap = wrap;
+
+  // Try/catch helper to minimize deoptimizations. Returns a completion
+  // record like context.tryEntries[i].completion. This interface could
+  // have been (and was previously) designed to take a closure to be
+  // invoked without arguments, but in all the cases we care about we
+  // already have an existing method we want to call, so there's no need
+  // to create a new function object. We can even get away with assuming
+  // the method takes exactly one argument, since that happens to be true
+  // in every case, so we don't have to touch the arguments object. The
+  // only additional allocation required is the completion record, which
+  // has a stable shape and so hopefully should be cheap to allocate.
+  function tryCatch(fn, obj, arg) {
+    try {
+      return { type: "normal", arg: fn.call(obj, arg) };
+    } catch (err) {
+      return { type: "throw", arg: err };
+    }
+  }
+
+  var GenStateSuspendedStart = "suspendedStart";
+  var GenStateSuspendedYield = "suspendedYield";
+  var GenStateExecuting = "executing";
+  var GenStateCompleted = "completed";
+
+  // Returning this object from the innerFn has the same effect as
+  // breaking out of the dispatch switch statement.
+  var ContinueSentinel = {};
+
+  // Dummy constructor functions that we use as the .constructor and
+  // .constructor.prototype properties for functions that return Generator
+  // objects. For full spec compliance, you may wish to configure your
+  // minifier not to mangle the names of these two functions.
+  function Generator() {}
+  function GeneratorFunction() {}
+  function GeneratorFunctionPrototype() {}
+
+  // This is a polyfill for %IteratorPrototype% for environments that
+  // don't natively support it.
+  var IteratorPrototype = {};
+  IteratorPrototype[iteratorSymbol] = function () {
+    return this;
+  };
+
+  var getProto = Object.getPrototypeOf;
+  var NativeIteratorPrototype = getProto && getProto(getProto(values([])));
+  if (NativeIteratorPrototype &&
+      NativeIteratorPrototype !== Op &&
+      hasOwn.call(NativeIteratorPrototype, iteratorSymbol)) {
+    // This environment has a native %IteratorPrototype%; use it instead
+    // of the polyfill.
+    IteratorPrototype = NativeIteratorPrototype;
+  }
+
+  var Gp = GeneratorFunctionPrototype.prototype =
+    Generator.prototype = Object.create(IteratorPrototype);
+  GeneratorFunction.prototype = Gp.constructor = GeneratorFunctionPrototype;
+  GeneratorFunctionPrototype.constructor = GeneratorFunction;
+  GeneratorFunction.displayName = define(
+    GeneratorFunctionPrototype,
+    toStringTagSymbol,
+    "GeneratorFunction"
+  );
+
+  // Helper for defining the .next, .throw, and .return methods of the
+  // Iterator interface in terms of a single ._invoke method.
+  function defineIteratorMethods(prototype) {
+    ["next", "throw", "return"].forEach(function(method) {
+      define(prototype, method, function(arg) {
+        return this._invoke(method, arg);
+      });
+    });
+  }
+
+  exports.isGeneratorFunction = function(genFun) {
+    var ctor = typeof genFun === "function" && genFun.constructor;
+    return ctor
+      ? ctor === GeneratorFunction ||
+        // For the native GeneratorFunction constructor, the best we can
+        // do is to check its .name property.
+        (ctor.displayName || ctor.name) === "GeneratorFunction"
+      : false;
+  };
+
+  exports.mark = function(genFun) {
+    if (Object.setPrototypeOf) {
+      Object.setPrototypeOf(genFun, GeneratorFunctionPrototype);
+    } else {
+      genFun.__proto__ = GeneratorFunctionPrototype;
+      define(genFun, toStringTagSymbol, "GeneratorFunction");
+    }
+    genFun.prototype = Object.create(Gp);
+    return genFun;
+  };
+
+  // Within the body of any async function, `await x` is transformed to
+  // `yield regeneratorRuntime.awrap(x)`, so that the runtime can test
+  // `hasOwn.call(value, "__await")` to determine if the yielded value is
+  // meant to be awaited.
+  exports.awrap = function(arg) {
+    return { __await: arg };
+  };
+
+  function AsyncIterator(generator, PromiseImpl) {
+    function invoke(method, arg, resolve, reject) {
+      var record = tryCatch(generator[method], generator, arg);
+      if (record.type === "throw") {
+        reject(record.arg);
+      } else {
+        var result = record.arg;
+        var value = result.value;
+        if (value &&
+            typeof value === "object" &&
+            hasOwn.call(value, "__await")) {
+          return PromiseImpl.resolve(value.__await).then(function(value) {
+            invoke("next", value, resolve, reject);
+          }, function(err) {
+            invoke("throw", err, resolve, reject);
+          });
+        }
+
+        return PromiseImpl.resolve(value).then(function(unwrapped) {
+          // When a yielded Promise is resolved, its final value becomes
+          // the .value of the Promise<{value,done}> result for the
+          // current iteration.
+          result.value = unwrapped;
+          resolve(result);
+        }, function(error) {
+          // If a rejected Promise was yielded, throw the rejection back
+          // into the async generator function so it can be handled there.
+          return invoke("throw", error, resolve, reject);
+        });
+      }
+    }
+
+    var previousPromise;
+
+    function enqueue(method, arg) {
+      function callInvokeWithMethodAndArg() {
+        return new PromiseImpl(function(resolve, reject) {
+          invoke(method, arg, resolve, reject);
+        });
+      }
+
+      return previousPromise =
+        // If enqueue has been called before, then we want to wait until
+        // all previous Promises have been resolved before calling invoke,
+        // so that results are always delivered in the correct order. If
+        // enqueue has not been called before, then it is important to
+        // call invoke immediately, without waiting on a callback to fire,
+        // so that the async generator function has the opportunity to do
+        // any necessary setup in a predictable way. This predictability
+        // is why the Promise constructor synchronously invokes its
+        // executor callback, and why async functions synchronously
+        // execute code before the first await. Since we implement simple
+        // async functions in terms of async generators, it is especially
+        // important to get this right, even though it requires care.
+        previousPromise ? previousPromise.then(
+          callInvokeWithMethodAndArg,
+          // Avoid propagating failures to Promises returned by later
+          // invocations of the iterator.
+          callInvokeWithMethodAndArg
+        ) : callInvokeWithMethodAndArg();
+    }
+
+    // Define the unified helper method that is used to implement .next,
+    // .throw, and .return (see defineIteratorMethods).
+    this._invoke = enqueue;
+  }
+
+  defineIteratorMethods(AsyncIterator.prototype);
+  AsyncIterator.prototype[asyncIteratorSymbol] = function () {
+    return this;
+  };
+  exports.AsyncIterator = AsyncIterator;
+
+  // Note that simple async functions are implemented on top of
+  // AsyncIterator objects; they just return a Promise for the value of
+  // the final result produced by the iterator.
+  exports.async = function(innerFn, outerFn, self, tryLocsList, PromiseImpl) {
+    if (PromiseImpl === void 0) PromiseImpl = Promise;
+
+    var iter = new AsyncIterator(
+      wrap(innerFn, outerFn, self, tryLocsList),
+      PromiseImpl
+    );
+
+    return exports.isGeneratorFunction(outerFn)
+      ? iter // If outerFn is a generator, return the full iterator.
+      : iter.next().then(function(result) {
+          return result.done ? result.value : iter.next();
+        });
+  };
+
+  function makeInvokeMethod(innerFn, self, context) {
+    var state = GenStateSuspendedStart;
+
+    return function invoke(method, arg) {
+      if (state === GenStateExecuting) {
+        throw new Error("Generator is already running");
+      }
+
+      if (state === GenStateCompleted) {
+        if (method === "throw") {
+          throw arg;
+        }
+
+        // Be forgiving, per 25.3.3.3.3 of the spec:
+        // https://people.mozilla.org/~jorendorff/es6-draft.html#sec-generatorresume
+        return doneResult();
+      }
+
+      context.method = method;
+      context.arg = arg;
+
+      while (true) {
+        var delegate = context.delegate;
+        if (delegate) {
+          var delegateResult = maybeInvokeDelegate(delegate, context);
+          if (delegateResult) {
+            if (delegateResult === ContinueSentinel) continue;
+            return delegateResult;
+          }
+        }
+
+        if (context.method === "next") {
+          // Setting context._sent for legacy support of Babel's
+          // function.sent implementation.
+          context.sent = context._sent = context.arg;
+
+        } else if (context.method === "throw") {
+          if (state === GenStateSuspendedStart) {
+            state = GenStateCompleted;
+            throw context.arg;
+          }
+
+          context.dispatchException(context.arg);
+
+        } else if (context.method === "return") {
+          context.abrupt("return", context.arg);
+        }
+
+        state = GenStateExecuting;
+
+        var record = tryCatch(innerFn, self, context);
+        if (record.type === "normal") {
+          // If an exception is thrown from innerFn, we leave state ===
+          // GenStateExecuting and loop back for another invocation.
+          state = context.done
+            ? GenStateCompleted
+            : GenStateSuspendedYield;
+
+          if (record.arg === ContinueSentinel) {
+            continue;
+          }
+
+          return {
+            value: record.arg,
+            done: context.done
+          };
+
+        } else if (record.type === "throw") {
+          state = GenStateCompleted;
+          // Dispatch the exception by looping back around to the
+          // context.dispatchException(context.arg) call above.
+          context.method = "throw";
+          context.arg = record.arg;
+        }
+      }
+    };
+  }
+
+  // Call delegate.iterator[context.method](context.arg) and handle the
+  // result, either by returning a { value, done } result from the
+  // delegate iterator, or by modifying context.method and context.arg,
+  // setting context.delegate to null, and returning the ContinueSentinel.
+  function maybeInvokeDelegate(delegate, context) {
+    var method = delegate.iterator[context.method];
+    if (method === undefined) {
+      // A .throw or .return when the delegate iterator has no .throw
+      // method always terminates the yield* loop.
+      context.delegate = null;
+
+      if (context.method === "throw") {
+        // Note: ["return"] must be used for ES3 parsing compatibility.
+        if (delegate.iterator["return"]) {
+          // If the delegate iterator has a return method, give it a
+          // chance to clean up.
+          context.method = "return";
+          context.arg = undefined;
+          maybeInvokeDelegate(delegate, context);
+
+          if (context.method === "throw") {
+            // If maybeInvokeDelegate(context) changed context.method from
+            // "return" to "throw", let that override the TypeError below.
+            return ContinueSentinel;
+          }
+        }
+
+        context.method = "throw";
+        context.arg = new TypeError(
+          "The iterator does not provide a 'throw' method");
+      }
+
+      return ContinueSentinel;
+    }
+
+    var record = tryCatch(method, delegate.iterator, context.arg);
+
+    if (record.type === "throw") {
+      context.method = "throw";
+      context.arg = record.arg;
+      context.delegate = null;
+      return ContinueSentinel;
+    }
+
+    var info = record.arg;
+
+    if (! info) {
+      context.method = "throw";
+      context.arg = new TypeError("iterator result is not an object");
+      context.delegate = null;
+      return ContinueSentinel;
+    }
+
+    if (info.done) {
+      // Assign the result of the finished delegate to the temporary
+      // variable specified by delegate.resultName (see delegateYield).
+      context[delegate.resultName] = info.value;
+
+      // Resume execution at the desired location (see delegateYield).
+      context.next = delegate.nextLoc;
+
+      // If context.method was "throw" but the delegate handled the
+      // exception, let the outer generator proceed normally. If
+      // context.method was "next", forget context.arg since it has been
+      // "consumed" by the delegate iterator. If context.method was
+      // "return", allow the original .return call to continue in the
+      // outer generator.
+      if (context.method !== "return") {
+        context.method = "next";
+        context.arg = undefined;
+      }
+
+    } else {
+      // Re-yield the result returned by the delegate method.
+      return info;
+    }
+
+    // The delegate iterator is finished, so forget it and continue with
+    // the outer generator.
+    context.delegate = null;
+    return ContinueSentinel;
+  }
+
+  // Define Generator.prototype.{next,throw,return} in terms of the
+  // unified ._invoke helper method.
+  defineIteratorMethods(Gp);
+
+  define(Gp, toStringTagSymbol, "Generator");
+
+  // A Generator should always return itself as the iterator object when the
+  // @@iterator function is called on it. Some browsers' implementations of the
+  // iterator prototype chain incorrectly implement this, causing the Generator
+  // object to not be returned from this call. This ensures that doesn't happen.
+  // See https://github.com/facebook/regenerator/issues/274 for more details.
+  Gp[iteratorSymbol] = function() {
+    return this;
+  };
+
+  Gp.toString = function() {
+    return "[object Generator]";
+  };
+
+  function pushTryEntry(locs) {
+    var entry = { tryLoc: locs[0] };
+
+    if (1 in locs) {
+      entry.catchLoc = locs[1];
+    }
+
+    if (2 in locs) {
+      entry.finallyLoc = locs[2];
+      entry.afterLoc = locs[3];
+    }
+
+    this.tryEntries.push(entry);
+  }
+
+  function resetTryEntry(entry) {
+    var record = entry.completion || {};
+    record.type = "normal";
+    delete record.arg;
+    entry.completion = record;
+  }
+
+  function Context(tryLocsList) {
+    // The root entry object (effectively a try statement without a catch
+    // or a finally block) gives us a place to store values thrown from
+    // locations where there is no enclosing try statement.
+    this.tryEntries = [{ tryLoc: "root" }];
+    tryLocsList.forEach(pushTryEntry, this);
+    this.reset(true);
+  }
+
+  exports.keys = function(object) {
+    var keys = [];
+    for (var key in object) {
+      keys.push(key);
+    }
+    keys.reverse();
+
+    // Rather than returning an object with a next method, we keep
+    // things simple and return the next function itself.
+    return function next() {
+      while (keys.length) {
+        var key = keys.pop();
+        if (key in object) {
+          next.value = key;
+          next.done = false;
+          return next;
+        }
+      }
+
+      // To avoid creating an additional object, we just hang the .value
+      // and .done properties off the next function object itself. This
+      // also ensures that the minifier will not anonymize the function.
+      next.done = true;
+      return next;
+    };
+  };
+
+  function values(iterable) {
+    if (iterable) {
+      var iteratorMethod = iterable[iteratorSymbol];
+      if (iteratorMethod) {
+        return iteratorMethod.call(iterable);
+      }
+
+      if (typeof iterable.next === "function") {
+        return iterable;
+      }
+
+      if (!isNaN(iterable.length)) {
+        var i = -1, next = function next() {
+          while (++i < iterable.length) {
+            if (hasOwn.call(iterable, i)) {
+              next.value = iterable[i];
+              next.done = false;
+              return next;
+            }
+          }
+
+          next.value = undefined;
+          next.done = true;
+
+          return next;
+        };
+
+        return next.next = next;
+      }
+    }
+
+    // Return an iterator with no values.
+    return { next: doneResult };
+  }
+  exports.values = values;
+
+  function doneResult() {
+    return { value: undefined, done: true };
+  }
+
+  Context.prototype = {
+    constructor: Context,
+
+    reset: function(skipTempReset) {
+      this.prev = 0;
+      this.next = 0;
+      // Resetting context._sent for legacy support of Babel's
+      // function.sent implementation.
+      this.sent = this._sent = undefined;
+      this.done = false;
+      this.delegate = null;
+
+      this.method = "next";
+      this.arg = undefined;
+
+      this.tryEntries.forEach(resetTryEntry);
+
+      if (!skipTempReset) {
+        for (var name in this) {
+          // Not sure about the optimal order of these conditions:
+          if (name.charAt(0) === "t" &&
+              hasOwn.call(this, name) &&
+              !isNaN(+name.slice(1))) {
+            this[name] = undefined;
+          }
+        }
+      }
+    },
+
+    stop: function() {
+      this.done = true;
+
+      var rootEntry = this.tryEntries[0];
+      var rootRecord = rootEntry.completion;
+      if (rootRecord.type === "throw") {
+        throw rootRecord.arg;
+      }
+
+      return this.rval;
+    },
+
+    dispatchException: function(exception) {
+      if (this.done) {
+        throw exception;
+      }
+
+      var context = this;
+      function handle(loc, caught) {
+        record.type = "throw";
+        record.arg = exception;
+        context.next = loc;
+
+        if (caught) {
+          // If the dispatched exception was caught by a catch block,
+          // then let that catch block handle the exception normally.
+          context.method = "next";
+          context.arg = undefined;
+        }
+
+        return !! caught;
+      }
+
+      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
+        var entry = this.tryEntries[i];
+        var record = entry.completion;
+
+        if (entry.tryLoc === "root") {
+          // Exception thrown outside of any try block that could handle
+          // it, so set the completion value of the entire function to
+          // throw the exception.
+          return handle("end");
+        }
+
+        if (entry.tryLoc <= this.prev) {
+          var hasCatch = hasOwn.call(entry, "catchLoc");
+          var hasFinally = hasOwn.call(entry, "finallyLoc");
+
+          if (hasCatch && hasFinally) {
+            if (this.prev < entry.catchLoc) {
+              return handle(entry.catchLoc, true);
+            } else if (this.prev < entry.finallyLoc) {
+              return handle(entry.finallyLoc);
+            }
+
+          } else if (hasCatch) {
+            if (this.prev < entry.catchLoc) {
+              return handle(entry.catchLoc, true);
+            }
+
+          } else if (hasFinally) {
+            if (this.prev < entry.finallyLoc) {
+              return handle(entry.finallyLoc);
+            }
+
+          } else {
+            throw new Error("try statement without catch or finally");
+          }
+        }
+      }
+    },
+
+    abrupt: function(type, arg) {
+      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
+        var entry = this.tryEntries[i];
+        if (entry.tryLoc <= this.prev &&
+            hasOwn.call(entry, "finallyLoc") &&
+            this.prev < entry.finallyLoc) {
+          var finallyEntry = entry;
+          break;
+        }
+      }
+
+      if (finallyEntry &&
+          (type === "break" ||
+           type === "continue") &&
+          finallyEntry.tryLoc <= arg &&
+          arg <= finallyEntry.finallyLoc) {
+        // Ignore the finally entry if control is not jumping to a
+        // location outside the try/catch block.
+        finallyEntry = null;
+      }
+
+      var record = finallyEntry ? finallyEntry.completion : {};
+      record.type = type;
+      record.arg = arg;
+
+      if (finallyEntry) {
+        this.method = "next";
+        this.next = finallyEntry.finallyLoc;
+        return ContinueSentinel;
+      }
+
+      return this.complete(record);
+    },
+
+    complete: function(record, afterLoc) {
+      if (record.type === "throw") {
+        throw record.arg;
+      }
+
+      if (record.type === "break" ||
+          record.type === "continue") {
+        this.next = record.arg;
+      } else if (record.type === "return") {
+        this.rval = this.arg = record.arg;
+        this.method = "return";
+        this.next = "end";
+      } else if (record.type === "normal" && afterLoc) {
+        this.next = afterLoc;
+      }
+
+      return ContinueSentinel;
+    },
+
+    finish: function(finallyLoc) {
+      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
+        var entry = this.tryEntries[i];
+        if (entry.finallyLoc === finallyLoc) {
+          this.complete(entry.completion, entry.afterLoc);
+          resetTryEntry(entry);
+          return ContinueSentinel;
+        }
+      }
+    },
+
+    "catch": function(tryLoc) {
+      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
+        var entry = this.tryEntries[i];
+        if (entry.tryLoc === tryLoc) {
+          var record = entry.completion;
+          if (record.type === "throw") {
+            var thrown = record.arg;
+            resetTryEntry(entry);
+          }
+          return thrown;
+        }
+      }
+
+      // The context.catch method must only be called with a location
+      // argument that corresponds to a known catch block.
+      throw new Error("illegal catch attempt");
+    },
+
+    delegateYield: function(iterable, resultName, nextLoc) {
+      this.delegate = {
+        iterator: values(iterable),
+        resultName: resultName,
+        nextLoc: nextLoc
+      };
+
+      if (this.method === "next") {
+        // Deliberately forget the last sent value so that we don't
+        // accidentally pass it on to the delegate.
+        this.arg = undefined;
+      }
+
+      return ContinueSentinel;
+    }
+  };
+
+  // Regardless of whether this script is executing as a CommonJS module
+  // or not, return the runtime object so that we can declare the variable
+  // regeneratorRuntime in the outer scope, which allows this module to be
+  // injected easily by `bin/regenerator --include-runtime script.js`.
+  return exports;
+
+}(
+  // If this script is executing as a CommonJS module, use module.exports
+  // as the regeneratorRuntime namespace. Otherwise create a new empty
+  // object. Either way, the resulting object will be used to initialize
+  // the regeneratorRuntime variable at the top of this file.
+   true ? module.exports : 0
+));
+
+try {
+  regeneratorRuntime = runtime;
+} catch (accidentalStrictMode) {
+  // This module should not be running in strict mode, so the above
+  // assignment should always work unless something is misconfigured. Just
+  // in case runtime.js accidentally runs in strict mode, we can escape
+  // strict mode using a global Function call. This could conceivably fail
+  // if a Content Security Policy forbids using Function, but in that case
+  // the proper solution is to fix the accidental strict mode problem. If
+  // you've misconfigured your bundler to force strict mode and applied a
+  // CSP to forbid Function, and you're not willing to fix either of those
+  // problems, please detail your unique predicament in a GitHub issue.
+  Function("r", "regeneratorRuntime = r")(runtime);
+}
+
+
+/***/ }),
+
 /***/ "./resources/js/components/App.vue":
 /*!*****************************************!*\
   !*** ./resources/js/components/App.vue ***!
@@ -39164,6 +40636,123 @@ component.options.__file = "resources/js/views/ClientsShow.vue"
 
 /***/ }),
 
+/***/ "./resources/js/views/ContractsCreate.vue":
+/*!************************************************!*\
+  !*** ./resources/js/views/ContractsCreate.vue ***!
+  \************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _ContractsCreate_vue_vue_type_template_id_2be5c6ae_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ContractsCreate.vue?vue&type=template&id=2be5c6ae&scoped=true& */ "./resources/js/views/ContractsCreate.vue?vue&type=template&id=2be5c6ae&scoped=true&");
+/* harmony import */ var _ContractsCreate_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ContractsCreate.vue?vue&type=script&lang=js& */ "./resources/js/views/ContractsCreate.vue?vue&type=script&lang=js&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+;
+var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__.default)(
+  _ContractsCreate_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__.default,
+  _ContractsCreate_vue_vue_type_template_id_2be5c6ae_scoped_true___WEBPACK_IMPORTED_MODULE_0__.render,
+  _ContractsCreate_vue_vue_type_template_id_2be5c6ae_scoped_true___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
+  false,
+  null,
+  "2be5c6ae",
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/views/ContractsCreate.vue"
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/views/ContractsIndex.vue":
+/*!***********************************************!*\
+  !*** ./resources/js/views/ContractsIndex.vue ***!
+  \***********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _ContractsIndex_vue_vue_type_template_id_52b74610___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ContractsIndex.vue?vue&type=template&id=52b74610& */ "./resources/js/views/ContractsIndex.vue?vue&type=template&id=52b74610&");
+/* harmony import */ var _ContractsIndex_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ContractsIndex.vue?vue&type=script&lang=js& */ "./resources/js/views/ContractsIndex.vue?vue&type=script&lang=js&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+;
+var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__.default)(
+  _ContractsIndex_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__.default,
+  _ContractsIndex_vue_vue_type_template_id_52b74610___WEBPACK_IMPORTED_MODULE_0__.render,
+  _ContractsIndex_vue_vue_type_template_id_52b74610___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/views/ContractsIndex.vue"
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/views/ContractsShow.vue":
+/*!**********************************************!*\
+  !*** ./resources/js/views/ContractsShow.vue ***!
+  \**********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _ContractsShow_vue_vue_type_template_id_4acc96af___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ContractsShow.vue?vue&type=template&id=4acc96af& */ "./resources/js/views/ContractsShow.vue?vue&type=template&id=4acc96af&");
+/* harmony import */ var _ContractsShow_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ContractsShow.vue?vue&type=script&lang=js& */ "./resources/js/views/ContractsShow.vue?vue&type=script&lang=js&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+;
+var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__.default)(
+  _ContractsShow_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__.default,
+  _ContractsShow_vue_vue_type_template_id_4acc96af___WEBPACK_IMPORTED_MODULE_0__.render,
+  _ContractsShow_vue_vue_type_template_id_4acc96af___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/views/ContractsShow.vue"
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
+
+/***/ }),
+
 /***/ "./resources/js/views/FinancialProductsCreate.vue":
 /*!********************************************************!*\
   !*** ./resources/js/views/FinancialProductsCreate.vue ***!
@@ -39316,6 +40905,123 @@ var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__
 /* hot reload */
 if (false) { var api; }
 component.options.__file = "resources/js/views/FinancialProductsShow.vue"
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/views/SharingsCreate.vue":
+/*!***********************************************!*\
+  !*** ./resources/js/views/SharingsCreate.vue ***!
+  \***********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _SharingsCreate_vue_vue_type_template_id_8e22c75c_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./SharingsCreate.vue?vue&type=template&id=8e22c75c&scoped=true& */ "./resources/js/views/SharingsCreate.vue?vue&type=template&id=8e22c75c&scoped=true&");
+/* harmony import */ var _SharingsCreate_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./SharingsCreate.vue?vue&type=script&lang=js& */ "./resources/js/views/SharingsCreate.vue?vue&type=script&lang=js&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+;
+var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__.default)(
+  _SharingsCreate_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__.default,
+  _SharingsCreate_vue_vue_type_template_id_8e22c75c_scoped_true___WEBPACK_IMPORTED_MODULE_0__.render,
+  _SharingsCreate_vue_vue_type_template_id_8e22c75c_scoped_true___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
+  false,
+  null,
+  "8e22c75c",
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/views/SharingsCreate.vue"
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/views/SharingsIndex.vue":
+/*!**********************************************!*\
+  !*** ./resources/js/views/SharingsIndex.vue ***!
+  \**********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _SharingsIndex_vue_vue_type_template_id_17a9a828___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./SharingsIndex.vue?vue&type=template&id=17a9a828& */ "./resources/js/views/SharingsIndex.vue?vue&type=template&id=17a9a828&");
+/* harmony import */ var _SharingsIndex_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./SharingsIndex.vue?vue&type=script&lang=js& */ "./resources/js/views/SharingsIndex.vue?vue&type=script&lang=js&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+;
+var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__.default)(
+  _SharingsIndex_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__.default,
+  _SharingsIndex_vue_vue_type_template_id_17a9a828___WEBPACK_IMPORTED_MODULE_0__.render,
+  _SharingsIndex_vue_vue_type_template_id_17a9a828___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/views/SharingsIndex.vue"
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/views/SharingsShow.vue":
+/*!*********************************************!*\
+  !*** ./resources/js/views/SharingsShow.vue ***!
+  \*********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _SharingsShow_vue_vue_type_template_id_bad2f55a___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./SharingsShow.vue?vue&type=template&id=bad2f55a& */ "./resources/js/views/SharingsShow.vue?vue&type=template&id=bad2f55a&");
+/* harmony import */ var _SharingsShow_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./SharingsShow.vue?vue&type=script&lang=js& */ "./resources/js/views/SharingsShow.vue?vue&type=script&lang=js&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+;
+var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__.default)(
+  _SharingsShow_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__.default,
+  _SharingsShow_vue_vue_type_template_id_bad2f55a___WEBPACK_IMPORTED_MODULE_0__.render,
+  _SharingsShow_vue_vue_type_template_id_bad2f55a___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/views/SharingsShow.vue"
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
 
 /***/ }),
@@ -39496,6 +41202,54 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/views/ContractsCreate.vue?vue&type=script&lang=js&":
+/*!*************************************************************************!*\
+  !*** ./resources/js/views/ContractsCreate.vue?vue&type=script&lang=js& ***!
+  \*************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ContractsCreate_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./ContractsCreate.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/views/ContractsCreate.vue?vue&type=script&lang=js&");
+ /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ContractsCreate_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__.default); 
+
+/***/ }),
+
+/***/ "./resources/js/views/ContractsIndex.vue?vue&type=script&lang=js&":
+/*!************************************************************************!*\
+  !*** ./resources/js/views/ContractsIndex.vue?vue&type=script&lang=js& ***!
+  \************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ContractsIndex_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./ContractsIndex.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/views/ContractsIndex.vue?vue&type=script&lang=js&");
+ /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ContractsIndex_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__.default); 
+
+/***/ }),
+
+/***/ "./resources/js/views/ContractsShow.vue?vue&type=script&lang=js&":
+/*!***********************************************************************!*\
+  !*** ./resources/js/views/ContractsShow.vue?vue&type=script&lang=js& ***!
+  \***********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ContractsShow_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./ContractsShow.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/views/ContractsShow.vue?vue&type=script&lang=js&");
+ /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ContractsShow_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__.default); 
+
+/***/ }),
+
 /***/ "./resources/js/views/FinancialProductsCreate.vue?vue&type=script&lang=js&":
 /*!*********************************************************************************!*\
   !*** ./resources/js/views/FinancialProductsCreate.vue?vue&type=script&lang=js& ***!
@@ -39557,6 +41311,54 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_FinancialProductsShow_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./FinancialProductsShow.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/views/FinancialProductsShow.vue?vue&type=script&lang=js&");
  /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_FinancialProductsShow_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__.default); 
+
+/***/ }),
+
+/***/ "./resources/js/views/SharingsCreate.vue?vue&type=script&lang=js&":
+/*!************************************************************************!*\
+  !*** ./resources/js/views/SharingsCreate.vue?vue&type=script&lang=js& ***!
+  \************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_SharingsCreate_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./SharingsCreate.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/views/SharingsCreate.vue?vue&type=script&lang=js&");
+ /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_SharingsCreate_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__.default); 
+
+/***/ }),
+
+/***/ "./resources/js/views/SharingsIndex.vue?vue&type=script&lang=js&":
+/*!***********************************************************************!*\
+  !*** ./resources/js/views/SharingsIndex.vue?vue&type=script&lang=js& ***!
+  \***********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_SharingsIndex_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./SharingsIndex.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/views/SharingsIndex.vue?vue&type=script&lang=js&");
+ /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_SharingsIndex_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__.default); 
+
+/***/ }),
+
+/***/ "./resources/js/views/SharingsShow.vue?vue&type=script&lang=js&":
+/*!**********************************************************************!*\
+  !*** ./resources/js/views/SharingsShow.vue?vue&type=script&lang=js& ***!
+  \**********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_SharingsShow_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./SharingsShow.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/views/SharingsShow.vue?vue&type=script&lang=js&");
+ /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_SharingsShow_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__.default); 
 
 /***/ }),
 
@@ -39747,6 +41549,57 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/views/ContractsCreate.vue?vue&type=template&id=2be5c6ae&scoped=true&":
+/*!*******************************************************************************************!*\
+  !*** ./resources/js/views/ContractsCreate.vue?vue&type=template&id=2be5c6ae&scoped=true& ***!
+  \*******************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ContractsCreate_vue_vue_type_template_id_2be5c6ae_scoped_true___WEBPACK_IMPORTED_MODULE_0__.render),
+/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ContractsCreate_vue_vue_type_template_id_2be5c6ae_scoped_true___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
+/* harmony export */ });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ContractsCreate_vue_vue_type_template_id_2be5c6ae_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./ContractsCreate.vue?vue&type=template&id=2be5c6ae&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/views/ContractsCreate.vue?vue&type=template&id=2be5c6ae&scoped=true&");
+
+
+/***/ }),
+
+/***/ "./resources/js/views/ContractsIndex.vue?vue&type=template&id=52b74610&":
+/*!******************************************************************************!*\
+  !*** ./resources/js/views/ContractsIndex.vue?vue&type=template&id=52b74610& ***!
+  \******************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ContractsIndex_vue_vue_type_template_id_52b74610___WEBPACK_IMPORTED_MODULE_0__.render),
+/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ContractsIndex_vue_vue_type_template_id_52b74610___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
+/* harmony export */ });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ContractsIndex_vue_vue_type_template_id_52b74610___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./ContractsIndex.vue?vue&type=template&id=52b74610& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/views/ContractsIndex.vue?vue&type=template&id=52b74610&");
+
+
+/***/ }),
+
+/***/ "./resources/js/views/ContractsShow.vue?vue&type=template&id=4acc96af&":
+/*!*****************************************************************************!*\
+  !*** ./resources/js/views/ContractsShow.vue?vue&type=template&id=4acc96af& ***!
+  \*****************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ContractsShow_vue_vue_type_template_id_4acc96af___WEBPACK_IMPORTED_MODULE_0__.render),
+/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ContractsShow_vue_vue_type_template_id_4acc96af___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
+/* harmony export */ });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ContractsShow_vue_vue_type_template_id_4acc96af___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./ContractsShow.vue?vue&type=template&id=4acc96af& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/views/ContractsShow.vue?vue&type=template&id=4acc96af&");
+
+
+/***/ }),
+
 /***/ "./resources/js/views/FinancialProductsCreate.vue?vue&type=template&id=54672e1a&scoped=true&":
 /*!***************************************************************************************************!*\
   !*** ./resources/js/views/FinancialProductsCreate.vue?vue&type=template&id=54672e1a&scoped=true& ***!
@@ -39815,6 +41668,57 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/views/SharingsCreate.vue?vue&type=template&id=8e22c75c&scoped=true&":
+/*!******************************************************************************************!*\
+  !*** ./resources/js/views/SharingsCreate.vue?vue&type=template&id=8e22c75c&scoped=true& ***!
+  \******************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_SharingsCreate_vue_vue_type_template_id_8e22c75c_scoped_true___WEBPACK_IMPORTED_MODULE_0__.render),
+/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_SharingsCreate_vue_vue_type_template_id_8e22c75c_scoped_true___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
+/* harmony export */ });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_SharingsCreate_vue_vue_type_template_id_8e22c75c_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./SharingsCreate.vue?vue&type=template&id=8e22c75c&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/views/SharingsCreate.vue?vue&type=template&id=8e22c75c&scoped=true&");
+
+
+/***/ }),
+
+/***/ "./resources/js/views/SharingsIndex.vue?vue&type=template&id=17a9a828&":
+/*!*****************************************************************************!*\
+  !*** ./resources/js/views/SharingsIndex.vue?vue&type=template&id=17a9a828& ***!
+  \*****************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_SharingsIndex_vue_vue_type_template_id_17a9a828___WEBPACK_IMPORTED_MODULE_0__.render),
+/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_SharingsIndex_vue_vue_type_template_id_17a9a828___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
+/* harmony export */ });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_SharingsIndex_vue_vue_type_template_id_17a9a828___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./SharingsIndex.vue?vue&type=template&id=17a9a828& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/views/SharingsIndex.vue?vue&type=template&id=17a9a828&");
+
+
+/***/ }),
+
+/***/ "./resources/js/views/SharingsShow.vue?vue&type=template&id=bad2f55a&":
+/*!****************************************************************************!*\
+  !*** ./resources/js/views/SharingsShow.vue?vue&type=template&id=bad2f55a& ***!
+  \****************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_SharingsShow_vue_vue_type_template_id_bad2f55a___WEBPACK_IMPORTED_MODULE_0__.render),
+/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_SharingsShow_vue_vue_type_template_id_bad2f55a___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
+/* harmony export */ });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_SharingsShow_vue_vue_type_template_id_bad2f55a___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./SharingsShow.vue?vue&type=template&id=bad2f55a& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/views/SharingsShow.vue?vue&type=template&id=bad2f55a&");
+
+
+/***/ }),
+
 /***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/App.vue?vue&type=template&id=332fccf4&scoped=true&":
 /*!***************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/App.vue?vue&type=template&id=332fccf4&scoped=true& ***!
@@ -39865,7 +41769,6 @@ var render = function() {
               _vm.userIsInstitution()
                 ? _c(
                     "div",
-                    { staticClass: "no-underline" },
                     [
                       _c(
                         "p",
@@ -39899,7 +41802,6 @@ var render = function() {
               _vm.userIsInstitution()
                 ? _c(
                     "div",
-                    { staticClass: "no-underline" },
                     [
                       _c(
                         "p",
@@ -39910,21 +41812,25 @@ var render = function() {
                         [_vm._v("Contas")]
                       ),
                       _vm._v(" "),
-                      _c("router-link", { attrs: { to: "/accounts/create" } }, [
-                        _c(
-                          "p",
-                          { staticClass: "pl-8 text-red-300 font-light" },
-                          [_vm._v("Adicionar Conta")]
-                        )
-                      ]),
-                      _vm._v(" "),
                       _c("router-link", { attrs: { to: "/accounts" } }, [
                         _c(
                           "p",
                           { staticClass: "pl-8 text-red-300 font-light" },
                           [_vm._v("Buscar Contas")]
                         )
-                      ])
+                      ]),
+                      _vm._v(" "),
+                      _c(
+                        "router-link",
+                        { attrs: { to: "/contracts/create" } },
+                        [
+                          _c(
+                            "p",
+                            { staticClass: "pl-8 text-red-300 font-light" },
+                            [_vm._v("Contratar Produtos")]
+                          )
+                        ]
+                      )
                     ],
                     1
                   )
@@ -39933,7 +41839,6 @@ var render = function() {
               _vm.userIsInstitution()
                 ? _c(
                     "div",
-                    { staticClass: "no-underline" },
                     [
                       _c(
                         "p",
@@ -39975,7 +41880,6 @@ var render = function() {
               _vm.userIsInstitution()
                 ? _c(
                     "div",
-                    { staticClass: "no-underline" },
                     [
                       _c(
                         "p",
@@ -39986,29 +41890,21 @@ var render = function() {
                         [_vm._v("Compartilhamentos")]
                       ),
                       _vm._v(" "),
-                      _c(
-                        "router-link",
-                        { attrs: { to: "/financial_products/create" } },
-                        [
-                          _c(
-                            "p",
-                            { staticClass: "pl-8 text-red-300 font-light" },
-                            [_vm._v("Adicionar Compartilhamento")]
-                          )
-                        ]
-                      ),
+                      _c("router-link", { attrs: { to: "/sharings/create" } }, [
+                        _c(
+                          "p",
+                          { staticClass: "pl-8 text-red-300 font-light" },
+                          [_vm._v("Adicionar Compartilhamento")]
+                        )
+                      ]),
                       _vm._v(" "),
-                      _c(
-                        "router-link",
-                        { attrs: { to: "/financial_products" } },
-                        [
-                          _c(
-                            "p",
-                            { staticClass: "pl-8 text-red-300 font-light" },
-                            [_vm._v("Buscar Compartilhamentos")]
-                          )
-                        ]
-                      )
+                      _c("router-link", { attrs: { to: "/sharings" } }, [
+                        _c(
+                          "p",
+                          { staticClass: "pl-8 text-red-300 font-light" },
+                          [_vm._v("Buscar Compartilhamentos")]
+                        )
+                      ])
                     ],
                     1
                   )
@@ -40898,31 +42794,64 @@ var render = function() {
           ]),
           _vm._v(" "),
           _c("div", { staticClass: "py-12" }, [
-            _vm.contracts
-              ? _c("div")
+            this.accountContracts.length > 0
+              ? _c(
+                  "div",
+                  _vm._l(this.accountContracts, function(contract) {
+                    return _c(
+                      "div",
+                      { key: contract.id },
+                      [
+                        _c(
+                          "router-link",
+                          {
+                            staticClass:
+                              "flex items-center border-b border-gray-400 p-4 hover:bg-red-100 hover:no-underline",
+                            attrs: { to: "/contracts/" + contract.data.id }
+                          },
+                          [
+                            _c("div", { staticClass: "pl-3" }, [
+                              _c(
+                                "p",
+                                { staticClass: "font-bold text-gray-400" },
+                                [
+                                  _vm._v(
+                                    "Contrato Nº " + _vm._s(contract.data.id)
+                                  )
+                                ]
+                              ),
+                              _vm._v(" "),
+                              _c("div", { staticClass: "flex pt-4" }, [
+                                _c("p", { staticClass: "text-red-400 pr-4" }, [
+                                  _vm._v(
+                                    "Valor R$ " +
+                                      _vm._s(contract.data.amount_invested)
+                                  )
+                                ]),
+                                _vm._v(" "),
+                                _c("p", { staticClass: "text-red-400 pr-4" }, [
+                                  _vm._v(
+                                    "Taxa de Administração " +
+                                      _vm._s(contract.data.administration_fee) +
+                                      "%"
+                                  )
+                                ])
+                              ])
+                            ])
+                          ]
+                        )
+                      ],
+                      1
+                    )
+                  }),
+                  0
+                )
               : _c("div", [
                   _c("p", { staticClass: "pt-2 text-red-300 pl-4" }, [
                     _vm._v("Não existem produtos contratados.")
                   ])
                 ])
-          ]),
-          _vm._v(" "),
-          _c(
-            "div",
-            { staticClass: "pl-8" },
-            [
-              _c(
-                "router-link",
-                {
-                  staticClass:
-                    "px-4 py-2 rounded text-sm text-green-500\n            border-2 border-green-500 font-bold mr-2 hover:no-underline hover:text-green-300 hover:border-green-300",
-                  attrs: { to: "/" }
-                },
-                [_vm._v("Contratar Produto Financeiro")]
-              )
-            ],
-            1
-          )
+          ])
         ])
   ])
 }
@@ -41271,8 +43200,14 @@ var render = function() {
                           _vm._v(_vm._s(client.data.name))
                         ]),
                         _vm._v(" "),
-                        _c("p", { staticClass: "text-red-400" }, [
-                          _vm._v(_vm._s(client.data.cpf))
+                        _c("div", { staticClass: "flex pt-4" }, [
+                          _c("p", { staticClass: "text-red-400 pr-4" }, [
+                            _vm._v(_vm._s(client.data.cpf))
+                          ]),
+                          _vm._v(" "),
+                          _c("p", { staticClass: "text-red-400 pr-4" }, [
+                            _vm._v(_vm._s(client.data.address))
+                          ])
                         ])
                       ])
                     ],
@@ -41408,6 +43343,421 @@ var render = function() {
           _c("p", { staticClass: "pt-2 text-red-300 pl-4" }, [
             _vm._v(_vm._s(_vm.client.birthdate))
           ])
+        ])
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/views/ContractsCreate.vue?vue&type=template&id=2be5c6ae&scoped=true&":
+/*!**********************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/views/ContractsCreate.vue?vue&type=template&id=2be5c6ae&scoped=true& ***!
+  \**********************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render),
+/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
+/* harmony export */ });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", [
+    _vm.step == 0 ? _c("div", [_vm._v("Carregando...")]) : _vm._e(),
+    _vm._v(" "),
+    _vm.step >= 1
+      ? _c("div", [
+          _c("p", { staticClass: "font-bold text-gray-400 text-xl pb-8" }, [
+            _vm._v(" Definindo Contrato - Passo " + _vm._s(this.step))
+          ]),
+          _vm._v(" "),
+          _vm.step == 1
+            ? _c(
+                "div",
+                _vm._l(this.products, function(product) {
+                  return _c("div", { key: product.id }, [
+                    _c(
+                      "button",
+                      {
+                        staticClass:
+                          "flex items-start w-full p-4 border-b border-gray-400 hover:bg-red-100 hover:no-underline",
+                        on: {
+                          click: function($event) {
+                            return _vm.selectProduct(product)
+                          }
+                        }
+                      },
+                      [
+                        _c("div", { staticClass: "pl-0 ml-0" }, [
+                          _c(
+                            "p",
+                            {
+                              staticClass: "font-bold text-gray-400 pl-0 ml-0"
+                            },
+                            [
+                              _vm._v(
+                                "Produto: " + _vm._s(product.data.description)
+                              )
+                            ]
+                          ),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "flex pt-4" }, [
+                            _c("p", { staticClass: "text-red-400 pr-4" }, [
+                              _vm._v(
+                                "Valor Mínimo: R$ " +
+                                  _vm._s(product.data.minimum_value)
+                              )
+                            ]),
+                            _vm._v(" "),
+                            _c("p", { staticClass: "text-red-400 pr-4" }, [
+                              _vm._v(
+                                "Taxa de Administração: " +
+                                  _vm._s(product.data.administration_fee) +
+                                  "%"
+                              )
+                            ])
+                          ])
+                        ])
+                      ]
+                    )
+                  ])
+                }),
+                0
+              )
+            : _vm._e(),
+          _vm._v(" "),
+          _vm.step == 2
+            ? _c(
+                "div",
+                _vm._l(_vm.accounts, function(account) {
+                  return _c("div", { key: account.id }, [
+                    _c(
+                      "button",
+                      {
+                        staticClass:
+                          "flex items-start w-full p-4 border-b border-gray-400 hover:bg-red-100 hover:no-underline",
+                        on: {
+                          click: function($event) {
+                            return _vm.selectAccount(account)
+                          }
+                        }
+                      },
+                      [
+                        _c("div", { staticClass: "pl-3" }, [
+                          _c("p", { staticClass: "font-bold text-gray-400" }, [
+                            _vm._v("Conta: " + _vm._s(account.data.id))
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "flex pt-4" }, [
+                            _c("p", { staticClass: "text-red-400 pr-4" }, [
+                              _vm._v(
+                                "Saldo: R$ " + _vm._s(account.data.balance)
+                              )
+                            ])
+                          ])
+                        ])
+                      ]
+                    )
+                  ])
+                }),
+                0
+              )
+            : _vm._e(),
+          _vm._v(" "),
+          _vm.step == 3
+            ? _c("div", [
+                _c(
+                  "form",
+                  {
+                    on: {
+                      submit: function($event) {
+                        $event.preventDefault()
+                        return _vm.submitForm($event)
+                      }
+                    }
+                  },
+                  [
+                    _c("InputField", {
+                      attrs: {
+                        name: "amount_invested",
+                        label: "Valor Investido",
+                        placeholder:
+                          "O valor precisa ser superior ao valor mínimo do produto",
+                        errors: _vm.errors
+                      },
+                      on: {
+                        "update:field": function($event) {
+                          _vm.form.amount_invested = $event
+                        }
+                      }
+                    }),
+                    _vm._v(" "),
+                    _vm._m(0),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      { staticClass: "flex justify-end" },
+                      [
+                        _c("router-link", { attrs: { to: "/" } }, [
+                          _c(
+                            "button",
+                            {
+                              staticClass:
+                                "py-2 px-4 rounded border-2 hover:border-red-500 text-red-500 mr-5"
+                            },
+                            [_vm._v("Cancelar")]
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c(
+                          "button",
+                          {
+                            staticClass:
+                              "bg-red-300 py-2 px-4 text-white rounded hover:bg-red-200"
+                          },
+                          [_vm._v("Adicionar Contrato")]
+                        )
+                      ],
+                      1
+                    )
+                  ],
+                  1
+                )
+              ])
+            : _vm._e()
+        ])
+      : _vm._e()
+  ])
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", [
+      _c("p", { staticClass: "font-bold text-red-300" }, [
+        _vm._v(
+          "Atenção: O cliente precisará aceitar o contrato antes que o mesmo seja válido"
+        )
+      ])
+    ])
+  }
+]
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/views/ContractsIndex.vue?vue&type=template&id=52b74610&":
+/*!*********************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/views/ContractsIndex.vue?vue&type=template&id=52b74610& ***!
+  \*********************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render),
+/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
+/* harmony export */ });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", [
+    _vm.loading
+      ? _c("div", [_vm._v("Carregando...")])
+      : _c(
+          "div",
+          [
+            _vm.contracts.length === 0
+              ? _c("div", [
+                  _c("p", [_vm._v("Não existem contratos cadastrados.")])
+                ])
+              : _vm._e(),
+            _vm._v(" "),
+            _vm._l(_vm.contracts, function(contract) {
+              return _c(
+                "div",
+                { key: contract.id },
+                [
+                  _c(
+                    "router-link",
+                    {
+                      staticClass:
+                        "flex items-center border-b border-gray-400 p-4 hover:bg-red-100 hover:no-underline",
+                      attrs: { to: "/contracts/" + contract.data.id }
+                    },
+                    [
+                      _c("div", { staticClass: "pl-3" }, [
+                        _c("p", { staticClass: "font-bold text-gray-400" }, [
+                          _vm._v("Contrato Nº " + _vm._s(contract.data.id))
+                        ]),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "flex pt-4" }, [
+                          _c("p", { staticClass: "text-red-400 pr-4" }, [
+                            _vm._v(
+                              "Valor R$ " +
+                                _vm._s(contract.data.amount_invested)
+                            )
+                          ]),
+                          _vm._v(" "),
+                          _c("p", { staticClass: "text-red-400 pr-4" }, [
+                            _vm._v(
+                              "Taxa de Administração " +
+                                _vm._s(contract.data.administration_fee) +
+                                "%"
+                            )
+                          ])
+                        ])
+                      ])
+                    ]
+                  )
+                ],
+                1
+              )
+            })
+          ],
+          2
+        )
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/views/ContractsShow.vue?vue&type=template&id=4acc96af&":
+/*!********************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/views/ContractsShow.vue?vue&type=template&id=4acc96af& ***!
+  \********************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render),
+/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
+/* harmony export */ });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", [
+    _vm.loading
+      ? _c("div", [_vm._v("Carregando...")])
+      : _c("div", [
+          _c("div", { staticClass: "flex justify-between" }, [
+            _c(
+              "a",
+              {
+                staticClass: "text-red-300",
+                attrs: { href: "#" },
+                on: {
+                  click: function($event) {
+                    return _vm.$router.back()
+                  }
+                }
+              },
+              [_vm._v("\n                Voltar\n            ")]
+            ),
+            _vm._v(" "),
+            _vm.contract.hiring_date == null
+              ? _c(
+                  "div",
+                  [
+                    _c(
+                      "router-link",
+                      {
+                        staticClass:
+                          "px-4 py-2 rounded text-sm text-green-500\n                border-2 border-green-500 font-bold mr-2 hover:no-underline hover:text-green-300 hover:border-green-300",
+                        attrs: { to: "/contracts/" + _vm.contract.id + "/edit" }
+                      },
+                      [_vm._v("Editar")]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "a",
+                      {
+                        staticClass:
+                          "px-4 py-2 rounded text-sm text-red-500 border-2 border-red-500 font-bold \n                hover:no-underline hover:text-red-300 hover:border-red-300",
+                        attrs: { href: "#" }
+                      },
+                      [_vm._v("Deletar")]
+                    )
+                  ],
+                  1
+                )
+              : _vm._e()
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "flex items-center pt-6" }, [
+            _c("p", { staticClass: "pl-4 text-xl" }, [
+              _vm._v("Contrato Nº " + _vm._s(_vm.contract.id))
+            ])
+          ]),
+          _vm._v(" "),
+          _c(
+            "p",
+            { staticClass: "pt-8 text-gray-400 font-bold uppercase font-xs" },
+            [_vm._v("Identificador do Produto")]
+          ),
+          _vm._v(" "),
+          _c("p", { staticClass: "pt-2 text-red-300 pl-4" }, [
+            _vm._v(_vm._s(_vm.contract.financial_products_id))
+          ]),
+          _vm._v(" "),
+          _c(
+            "p",
+            { staticClass: "pt-8 text-gray-400 font-bold uppercase font-xs" },
+            [_vm._v("Valor Investido")]
+          ),
+          _vm._v(" "),
+          _c("p", { staticClass: "pt-2 text-red-300 pl-4" }, [
+            _vm._v("R$" + _vm._s(_vm.contract.amount_invested))
+          ]),
+          _vm._v(" "),
+          _c(
+            "p",
+            { staticClass: "pt-8 text-gray-400 font-bold uppercase font-xs" },
+            [_vm._v("Taxa de Administração")]
+          ),
+          _vm._v(" "),
+          _c("p", { staticClass: "pt-2 text-red-300 pl-4" }, [
+            _vm._v(_vm._s(_vm.contract.administration_fee) + "%")
+          ]),
+          _vm._v(" "),
+          _c(
+            "p",
+            { staticClass: "pt-8 text-gray-400 font-bold uppercase font-xs" },
+            [_vm._v("Situação")]
+          ),
+          _vm._v(" "),
+          _vm.contract.finished
+            ? _c("p", { staticClass: "pt-2 text-red-300 pl-4" }, [
+                _vm._v("Quitado")
+              ])
+            : _c("p", { staticClass: "pt-2 text-red-300 pl-4" }, [
+                _vm._v("Não Quitado")
+              ]),
+          _vm._v(" "),
+          _vm.contract.hiring_date == null
+            ? _c("p", { staticClass: "pt-2 text-red-300 pl-4" }, [
+                _vm._v("Não Aceito")
+              ])
+            : _c("p", { staticClass: "pt-2 text-red-300 pl-4" }, [
+                _vm._v("Aceito")
+              ])
         ])
   ])
 }
@@ -41829,6 +44179,430 @@ var render = function() {
           _c("p", { staticClass: "pt-2 text-red-300 pl-4" }, [
             _vm._v(_vm._s(_vm.product.administration_fee))
           ])
+        ])
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/views/SharingsCreate.vue?vue&type=template&id=8e22c75c&scoped=true&":
+/*!*********************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/views/SharingsCreate.vue?vue&type=template&id=8e22c75c&scoped=true& ***!
+  \*********************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render),
+/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
+/* harmony export */ });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", [
+    _vm.step == 0 ? _c("div", [_vm._v("Carregando...")]) : _vm._e(),
+    _vm._v(" "),
+    _vm.step >= 1
+      ? _c("div", [
+          _c("p", { staticClass: "font-bold text-gray-400 text-xl pb-8" }, [
+            _vm._v(" Definindo Compartilhamento - Passo " + _vm._s(this.step))
+          ]),
+          _vm._v(" "),
+          _vm.step == 1
+            ? _c("div", [
+                _vm.clients.length > 0
+                  ? _c(
+                      "div",
+                      _vm._l(_vm.clients, function(client) {
+                        return _c("div", { key: client.id }, [
+                          _c(
+                            "button",
+                            {
+                              staticClass:
+                                "flex items-start w-full p-4 border-b border-gray-400 hover:bg-red-100 hover:no-underline",
+                              on: {
+                                click: function($event) {
+                                  return _vm.selectClient(client)
+                                }
+                              }
+                            },
+                            [
+                              _c("div", { staticClass: "pl-0 ml-0" }, [
+                                _c(
+                                  "p",
+                                  {
+                                    staticClass:
+                                      "font-bold text-gray-400 pl-0 ml-0"
+                                  },
+                                  [
+                                    _vm._v(
+                                      "Cliente: " + _vm._s(client.data.name)
+                                    )
+                                  ]
+                                ),
+                                _vm._v(" "),
+                                _c("div", { staticClass: "flex pt-4" }, [
+                                  _c(
+                                    "p",
+                                    { staticClass: "text-red-400 pr-4" },
+                                    [_vm._v("CPF: " + _vm._s(client.data.cpf))]
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "p",
+                                    { staticClass: "text-red-400 pr-4" },
+                                    [
+                                      _vm._v(
+                                        "Data de Nascimento " +
+                                          _vm._s(client.data.birthdate)
+                                      )
+                                    ]
+                                  )
+                                ])
+                              ])
+                            ]
+                          )
+                        ])
+                      }),
+                      0
+                    )
+                  : _c("div", { staticClass: "text-red-400 font-bold" }, [
+                      _vm._v("Nenhum cliente cadastrado!")
+                    ])
+              ])
+            : _vm._e(),
+          _vm._v(" "),
+          _vm.step == 2
+            ? _c("div", [
+                _vm.institutions.length > 0
+                  ? _c(
+                      "div",
+                      _vm._l(_vm.institutions, function(institution) {
+                        return _c("div", { key: institution.id }, [
+                          _c(
+                            "button",
+                            {
+                              staticClass:
+                                "flex items-start w-full p-4 border-b border-gray-400 hover:bg-red-100 hover:no-underline",
+                              on: {
+                                click: function($event) {
+                                  return _vm.selectInstitution(institution)
+                                }
+                              }
+                            },
+                            [
+                              _c("div", { staticClass: "pl-3" }, [
+                                _c(
+                                  "p",
+                                  { staticClass: "font-bold text-gray-400" },
+                                  [
+                                    _vm._v(
+                                      "Instituição: " +
+                                        _vm._s(institution.data.company_name)
+                                    )
+                                  ]
+                                ),
+                                _vm._v(" "),
+                                _c("div", { staticClass: "flex pt-4" }, [
+                                  _c(
+                                    "p",
+                                    { staticClass: "text-red-400 pr-4" },
+                                    [
+                                      _vm._v(
+                                        "CNPJ: " + _vm._s(institution.data.cnpj)
+                                      )
+                                    ]
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "p",
+                                    { staticClass: "text-red-400 pr-4" },
+                                    [
+                                      _vm._v(
+                                        "Nome Fantasia: " +
+                                          _vm._s(institution.data.fantasy_name)
+                                      )
+                                    ]
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "p",
+                                    { staticClass: "text-red-400 pr-4" },
+                                    [
+                                      _vm._v(
+                                        "Código Bancário: " +
+                                          _vm._s(institution.data.bank_code)
+                                      )
+                                    ]
+                                  )
+                                ])
+                              ])
+                            ]
+                          )
+                        ])
+                      }),
+                      0
+                    )
+                  : _c("div", { staticClass: "text-red-400 font-bold" }, [
+                      _vm._v("Nenhuma instituição cadastrada!")
+                    ])
+              ])
+            : _vm._e(),
+          _vm._v(" "),
+          _vm.step == 3
+            ? _c("div", [
+                _c(
+                  "form",
+                  {
+                    on: {
+                      submit: function($event) {
+                        $event.preventDefault()
+                        return _vm.submitForm($event)
+                      }
+                    }
+                  },
+                  [
+                    _vm._m(0),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      { staticClass: "flex justify-end" },
+                      [
+                        _c("router-link", { attrs: { to: "/" } }, [
+                          _c(
+                            "button",
+                            {
+                              staticClass:
+                                "py-2 px-4 rounded border-2 hover:border-red-500 text-red-500 mr-5"
+                            },
+                            [_vm._v("Cancelar")]
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c(
+                          "button",
+                          {
+                            staticClass:
+                              "bg-red-300 py-2 px-4 text-white rounded hover:bg-red-200"
+                          },
+                          [_vm._v("Registrar Compartilhamento")]
+                        )
+                      ],
+                      1
+                    )
+                  ]
+                )
+              ])
+            : _vm._e()
+        ])
+      : _vm._e()
+  ])
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "py-6" }, [
+      _c("p", { staticClass: "font-bold text-red-300 text-xl" }, [
+        _vm._v(
+          "Atenção: O cliente precisará autorizar o compartilhamento antes que o mesmo seja válido e o arquivo seja recebido"
+        )
+      ]),
+      _vm._v(" "),
+      _c("p", { staticClass: "text-red-300 pt-6 text-lg" }, [
+        _vm._v("Deseja continuar com o compartilhamento?")
+      ])
+    ])
+  }
+]
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/views/SharingsIndex.vue?vue&type=template&id=17a9a828&":
+/*!********************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/views/SharingsIndex.vue?vue&type=template&id=17a9a828& ***!
+  \********************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render),
+/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
+/* harmony export */ });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", [
+    _vm.loading
+      ? _c("div", [_vm._v("Carregando...")])
+      : _c(
+          "div",
+          [
+            _vm.sharings.length === 0
+              ? _c("div", [
+                  _c("p", { staticClass: "text-red-300" }, [
+                    _vm._v("Não existem compartilhamentos cadastrados.")
+                  ])
+                ])
+              : _vm._e(),
+            _vm._v(" "),
+            _vm._l(_vm.sharings, function(sharing) {
+              return _c(
+                "div",
+                { key: sharing.id },
+                [
+                  _c(
+                    "router-link",
+                    {
+                      staticClass:
+                        "flex items-center border-b border-gray-400 p-4 hover:bg-red-100 hover:no-underline",
+                      attrs: { to: "/sharings/" + sharing.data.id }
+                    },
+                    [
+                      _c("div", { staticClass: "pl-3" }, [
+                        _c("p", { staticClass: "font-bold text-gray-400" }, [
+                          _vm._v(
+                            "Cliente: " +
+                              _vm._s(_vm.searchClient(sharing).data.name)
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "flex pt-4" }, [
+                          _c("p", { staticClass: "text-red-400 pr-4" }, [
+                            _vm._v(
+                              "Compartilhamento nº " + _vm._s(sharing.data.id)
+                            )
+                          ]),
+                          _vm._v(" "),
+                          _c("p", { staticClass: "text-red-400 pr-4" }, [
+                            _vm._v(
+                              "Banco de Origem: " +
+                                _vm._s(
+                                  _vm.searchInstitution(sharing).data
+                                    .fantasy_name
+                                )
+                            )
+                          ])
+                        ])
+                      ])
+                    ]
+                  )
+                ],
+                1
+              )
+            })
+          ],
+          2
+        )
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/views/SharingsShow.vue?vue&type=template&id=bad2f55a&":
+/*!*******************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/views/SharingsShow.vue?vue&type=template&id=bad2f55a& ***!
+  \*******************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render),
+/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
+/* harmony export */ });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", [
+    _vm.loading
+      ? _c("div", [_vm._v("Carregando...")])
+      : _c("div", [
+          _c("div", { staticClass: "flex justify-between" }, [
+            _c(
+              "a",
+              {
+                staticClass: "text-red-300",
+                attrs: { href: "#" },
+                on: {
+                  click: function($event) {
+                    return _vm.$router.back()
+                  }
+                }
+              },
+              [_vm._v("\n                Voltar\n            ")]
+            )
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "flex items-center pt-6" }, [
+            _c("p", { staticClass: "pl-4 text-xl" }, [
+              _vm._v("Cliente " + _vm._s(_vm.client.name))
+            ])
+          ]),
+          _vm._v(" "),
+          _c(
+            "p",
+            { staticClass: "pt-8 text-gray-400 font-bold uppercase font-xs" },
+            [_vm._v("Identificador do Compartilhamento")]
+          ),
+          _vm._v(" "),
+          _c("p", { staticClass: "pt-2 text-red-300 pl-4" }, [
+            _vm._v(_vm._s(_vm.sharing.id))
+          ]),
+          _vm._v(" "),
+          _c(
+            "p",
+            { staticClass: "pt-8 text-gray-400 font-bold uppercase font-xs" },
+            [_vm._v("Banco de Origin")]
+          ),
+          _vm._v(" "),
+          _c("p", { staticClass: "pt-2 text-red-300 pl-4" }, [
+            _vm._v(_vm._s(_vm.institution.fantasy_name))
+          ]),
+          _vm._v(" "),
+          _c(
+            "p",
+            { staticClass: "pt-8 text-gray-400 font-bold uppercase font-xs" },
+            [_vm._v("Compartilhamento Válido")]
+          ),
+          _vm._v(" "),
+          _vm.persisted
+            ? _c("p", { staticClass: "pt-2 text-red-300 pl-4" }, [
+                _vm._v("Sim")
+              ])
+            : _c("p", { staticClass: "pt-2 text-red-300 pl-4" }, [
+                _vm._v("Não")
+              ]),
+          _vm._v(" "),
+          _vm.persisted
+            ? _c("div", { staticClass: "pt-6" }, [
+                _c(
+                  "button",
+                  {
+                    staticClass:
+                      "px-4 py-2 rounded text-sm text-green-500\n            border-2 border-green-500 font-bold mr-2 hover:no-underline hover:text-green-300 hover:border-green-300"
+                  },
+                  [_vm._v("Acessar compartilhamento")]
+                )
+              ])
+            : _vm._e()
         ])
   ])
 }

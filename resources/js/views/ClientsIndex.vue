@@ -12,9 +12,11 @@
                 
                 <div class="pl-3">
                     <p class="font-bold text-gray-400">{{ client.data.name }}</p>
-                    <p class="text-red-400">{{ client.data.cpf }}</p>
-                </div>
-                
+                    <div class="flex pt-4">
+                        <p class="text-red-400 pr-4">{{ client.data.cpf }}</p>
+                        <p class="text-red-400 pr-4">{{ client.data.address}}</p>                  
+                    </div>
+                </div>                
             </router-link>
         </div>
     </div>

@@ -15,9 +15,6 @@ class AccountsController extends Controller
         };
 
         $accounts = Accounts::where('financial_institutions_id', '=', request()->user()->entity->id)->get();
-        //$accounts = Accounts::whereHas('financial_institutions', function (Builder $query) {
-        //    $query->where('financial_institutions_id.id', '=', request()->user()->entity->id);
-        //})->get();
 
         return AccountsResource::collection($accounts);
     }

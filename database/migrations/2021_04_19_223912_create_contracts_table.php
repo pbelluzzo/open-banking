@@ -19,7 +19,7 @@ class CreateContractsTable extends Migration
             $table->integer('financial_products_id')->references('id')->on('financial_products');
             $table->decimal('amount_invested',15,2);
             $table->decimal('administration_fee',4,2);
-            $table->date('hiring_date');
+            $table->date('hiring_date')->nullable();
             $table->boolean('finished')->default(0);
             $table->timestamps();
         });

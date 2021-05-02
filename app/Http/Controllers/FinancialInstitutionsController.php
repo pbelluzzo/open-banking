@@ -8,6 +8,13 @@ use App\Http\Resources\FinancialInstitutions as FinancialInstitutionsResource;
 
 class FinancialInstitutionsController extends Controller
 {
+    public function index() 
+    {
+        $financial_institutions = FinancialInstitutions::where('financial_institutions.id', '<>', request()->user()->entity->id)->get();
+
+        return FinancialInstitutionsResource::collection($financial_institutions);
+    }
+
     public function store()
     {
         FinancialInstitutions::create($this->validateData());
@@ -28,7 +35,7 @@ class FinancialInstitutionsController extends Controller
 
         return (new FinancialInstitutionsResource($financial_institution))
             ->response()
-            ->setStatusCode(201);
+            ->setStatusCode(200);
     }
 
     public function destroy(FinancialInstitutions $financial_institution)

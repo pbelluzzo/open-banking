@@ -24,8 +24,24 @@ class Contracts extends Model
         'finished' => 'integer'
     ];
 
+    public function path()
+    {
+        return '/contracts/' . $this->id;
+    }
+
+    public function getHiringDateAttribute($hiring_date)
+    {
+        if($hiring_date == null) return null;
+        $newHiringDate = Carbon::parse($hiring_date);
+        return $HiringDate->format('d/m/Y');
+    }
+
     public function setHiringDateAttribute($hiring_date)
     {
+        if($hiring_date == null) {
+            $this->attributes['hiring_date'] = null;
+            return;
+        }
         $this->attributes['hiring_date'] = Carbon::createFromFormat('d/m/Y', $hiring_date);
     }
 

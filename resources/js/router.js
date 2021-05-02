@@ -12,6 +12,12 @@ import FinancialProductsEdit from "./views/FinancialProductsEdit";
 import AccountsIndex from "./views/AccountsIndex";
 import AccountsShow from "./views/AccountsShow";
 import AccountsEdit from "./views/AccountsEdit";
+import ContractsCreate from "./views/ContractsCreate";
+import ContractsShow from "./views/ContractsShow";
+import ContractsIndex from "./views/ContractsIndex";
+import SharingsCreate from "./views/SharingsCreate";
+import SharingsIndex from "./views/SharingsIndex";
+import SharingsShow from "./views/SharingsShow";
 
 Vue.use(VueRouter);
 
@@ -33,5 +39,15 @@ export default new VueRouter({
         { path: '/accounts', component: AccountsIndex},
         { path: '/accounts/:id', component: AccountsShow},
         { path: '/accounts/:id/edit', component: AccountsEdit},
+
+        
+        { path: '/contracts', component: ContractsIndex},
+        { path: '/contracts/create', component: ContractsCreate},
+        { path: '/contracts/:id', component: ContractsShow},
+        
+        { path: '/sharings/create', component: SharingsCreate},
+        { path: '/sharings', component: SharingsIndex},
+        { path: '/sharings/:id', component: SharingsShow},
+        
     ]
 });
