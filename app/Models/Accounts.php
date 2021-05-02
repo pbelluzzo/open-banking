@@ -15,6 +15,11 @@ class Accounts extends Model
         'balance' => 'float'
     ];
 
+    public function path()
+    {
+        return '/accounts/' . $this->id;
+    }
+
     public function financialInstitutions()
     {
         return $this->belongsTo(FinancialInstitutions::class);

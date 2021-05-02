@@ -22,7 +22,7 @@ class FinancialProductsFactory extends Factory
     public function definition()
     {
         return [
-            'institution_id' => '1',
+            'financial_institutions_id' => '1',
             'description' => 'fake product description',
             'minimum_value' => (float)(random_int(100,10000)/100),
             'administration_fee' => (float)(random_int(55,500)/100),

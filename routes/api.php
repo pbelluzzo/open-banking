@@ -31,11 +31,13 @@ Route::middleware('auth:api')->group(function() {
     Route::patch('/financial_institutions/{financial_institution}', 'FinancialInstitutionsController@update');
     Route::delete('/financial_institutions/{financial_institution}', 'FinancialInstitutionsController@destroy');
     
+    Route::get('/accounts', 'AccountsController@index');
     Route::post('/accounts', 'AccountsController@store');
     Route::get('/accounts/{account}', 'AccountsController@show');
     Route::patch('/accounts/{account}', 'AccountsController@update');
     Route::delete('/accounts/{account}', 'AccountsController@destroy');
     
+    Route::get('/financial_products', 'FinancialProductsController@index');
     Route::post('/financial_products', 'FinancialProductsController@store');
     Route::get('/financial_products/{financial_product}', 'FinancialProductsController@show');
     Route::patch('/financial_products/{financial_product}', 'FinancialProductsController@update');

@@ -16,6 +16,11 @@ class FinancialProducts extends Model
         'administration_fee' => 'float'
     ];
 
+    public function path()
+    {
+        return '/financial_products/' . $this->id;
+    }
+
     public function contracts()
     {
         return $this->belongsTo(Contracts::class);

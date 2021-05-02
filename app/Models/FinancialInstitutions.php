@@ -11,6 +11,12 @@ class FinancialInstitutions extends Model
 
     protected $guarded = [];
 
+
+    public function path()
+    {
+        return '/financial_institutions/' . $this->id;
+    }    
+
     public function user()
     {
         return $this->morphOne(User::class, 'entity');

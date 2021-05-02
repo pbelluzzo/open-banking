@@ -15,8 +15,8 @@ class CreateContractsTable extends Migration
     {
         Schema::create('contracts', function (Blueprint $table) {
             $table->id();
-            $table->integer('account_id')->references('id')->on('accounts');
-            $table->integer('product_id')->references('id')->on('financial_products');
+            $table->integer('accounts_id')->references('id')->on('accounts');
+            $table->integer('financial_products_id')->references('id')->on('financial_products');
             $table->decimal('amount_invested',15,2);
             $table->decimal('administration_fee',4,2);
             $table->date('hiring_date');

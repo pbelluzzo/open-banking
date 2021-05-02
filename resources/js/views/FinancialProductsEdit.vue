@@ -8,17 +8,15 @@
         </div>
 
         <div class="py-6">
-            <p class="pl-4 text-xl">Editar Cliente</p>
+            <p class="pl-4 text-xl">Editar Produto Financeiro</p>
         </div>
 
         <form @submit.prevent="submitForm">
-            <InputField name="cpf" label="CPF" placeholder="CPF do Cliente" :errors="errors" @update:field="form.cpf = $event" :data="form.cpf"/>
+            <InputField name="description" label="Descrição" placeholder="Descrição do Produto" :errors="errors" type="text" @update:field="form.description = $event" :data="form.description"/>
 
-            <InputField name="name" label="Nome" placeholder="Nome do Cliente" :errors="errors" @update:field="form.name = $event" :data="form.name"/>
+            <InputField name="minimum_value" label="Valor Mínimo" placeholder="Valor mínimo para aquisição" :errors="errors" type="text" @update:field="form.minimum_value = $event" :data="form.minimum_value"/>
 
-            <InputField name="address" label="Endereço" placeholder="Endereço do Cliente" :errors="errors" @update:field="form.address = $event" :data="form.address"/>
-
-            <InputField name="birthdate" label="Data de Nascimento" placeholder="dd/mm/aaaa" :errors="errors" @update:field="form.birthdate = $event" :data="form.birthdate"/>
+            <InputField name="administration_fee" label="Taxa de Administração" placeholder="Taxa de administração do produto" :errors="errors" type="text" @update:field="form.administration_fee = $event" :data="form.administration_fee"/>
 
             <div class="flex justify-end">
                 <router-link to="/"><button class="py-2 px-4 rounded border-2 hover:border-red-500 text-red-500 mr-5">Cancelar</button></router-link>
@@ -31,30 +29,28 @@
 
 <script>
     import InputField from '../components/InputField';
-    import UserCircle from '../components/UserCircle';
     export default {
-        name: "ClientsEdit",
+        name: "FinancialProductsEdit",
 
         components: 
         {
             InputField,
-            UserCircle,
         },
 
         data: function() {
             return {
                 form: {
-                    'cpf': '',
-                    'name': '',
-                    'address': '',
-                    'birthdate': ''
+                    'financial_institutions_id' : '',
+                    'description': '',
+                    'minimum_value': '',
+                    'administration_fee': '',
                 },
                 errors: null,
             }
         },
 
         mounted() {
-        axios.get('/api/clients/' + this.$route.params.id)
+        axios.get('/api/financial_products/' + this.$route.params.id)
         .then(response => {
             this.form = response.data.data;
 
@@ -62,14 +58,14 @@
         .catch(error => {
 
             if (error.response.status === 404) {
-                this.$router.push('/contacts');
+                this.$router.push('/financial_products');
             }
         });
         },
 
         methods: {
             submitForm: function() {
-                axios.patch('/api/clients/' + this.$route.params.id, this.form)
+                axios.patch('/api/financial_products/' + this.$route.params.id, this.form)
                     .then(response => {
                         this.$router.push(response.data.links.self);
                     })

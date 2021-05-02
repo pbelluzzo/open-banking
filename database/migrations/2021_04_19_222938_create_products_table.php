@@ -15,7 +15,7 @@ class CreateProductsTable extends Migration
     {
         Schema::create('financial_products', function (Blueprint $table) {
             $table->id()->from(100000);
-            $table->string('institution_id')->references('id')->on('financial_institutions');
+            $table->string('financial_institutions_id')->references('id')->on('financial_institutions');
             $table->string('description');
             $table->decimal('minimum_value',15,2);
             $table->decimal('administration_fee',4,2);

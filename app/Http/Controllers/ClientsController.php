@@ -23,16 +23,6 @@ class ClientsController extends Controller
         })->get();
 
         return ClientsResource::collection($clients);
-
-        // return ClientsResource::collection
-        // (
-        //     DB::table('financial_institutions')
-        //         ->join('accounts', 'financial_institutions.id', '=', 'accounts.financial_institutions_id')
-        //         ->join('clients', 'accounts.clients_id', '=', 'clients.id')
-        //         ->select('clients.*')
-        //         ->where('financial_institutions.id', '=', $institutionId)
-        //         ->get()
-        // );
     }
 
     public function store()

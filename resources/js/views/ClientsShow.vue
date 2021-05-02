@@ -7,9 +7,12 @@
                     Voltar
                 </a>
                 <div>
+                    <router-link :to="'/'" class="px-4 py-2 rounded text-sm text-green-500
+                    border-2 border-green-500 font-bold mr-2 hover:no-underline hover:text-green-300 hover:border-green-300">Criar Usuário do Cliente</router-link>
                     <router-link :to="'/clients/' + client.id + '/edit'" class="px-4 py-2 rounded text-sm text-green-500
-                    border-2 border-green-500 font-bold mr-2 no-underline">Editar</router-link>
-                    <a href="#" class="px-4 py-2 rounded text-sm text-red-500 border-2 border-red-500 font-bold no-underline">Deletar</a>
+                    border-2 border-green-500 font-bold mr-2 hover:no-underline hover:text-green-300 hover:border-green-300">Editar</router-link>
+                    <a href="#" class="px-4 py-2 rounded text-sm text-red-500 border-2 border-red-500 font-bold 
+                    hover:no-underline hover:text-red-300 hover:border-red-300">Desativar</a>
                 </div>
             </div>
 
@@ -24,6 +27,7 @@
             <p class="pt-2 text-red-300 pl-4">{{ client.address}}</p>
             <p class="pt-8 text-gray-400 font-bold uppercase font-xs">Data de Nascimento</p>
             <p class="pt-2 text-red-300 pl-4">{{ client.birthdate }}</p>
+
         </div>            
 
     </div>
@@ -37,6 +41,10 @@ export default {
     components: {
         UserCircle,
     },
+
+    props: [
+        'user'
+    ],
 
     mounted() {
         axios.get('/api/clients/' + this.$route.params.id)
@@ -52,8 +60,9 @@ export default {
                 this.$router.push('/clients');
             }
         });
-    },
 
+        
+    },
     data: function() {
         return {
             loading: true,
