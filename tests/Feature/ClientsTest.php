@@ -37,7 +37,7 @@ class ClientsTest extends TestCase
     /** @test */
     public function a_list_of_clients_can_be_recovered_by_the_institution_user()
     {
-        $this->withoutExceptionHandling();
+        //$this->withoutExceptionHandling();
 
         $institution = FinancialInstitutions::factory()->create();
         $institution2 = FinancialInstitutions::factory()->create();

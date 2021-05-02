@@ -50,6 +50,12 @@
                         </router-link>        
                     </div>
 
+                    <div>
+                        <router-link to="/logout">
+                        <p class="pt-12 pl-4 font-bold text-red-400 text-sm pb-4">Logout</p>
+                        </router-link>
+                    </div>
+
                 </nav>
             </div>
             <div class="flex flex-col flex-1 h-screen overflow-y-hidden">
@@ -87,7 +93,18 @@
 
         data: function() {
             return {
-                'owner': ''
+                'owner': '',
+                title: '',
+            }
+        },
+
+        watch: {
+            $route(to, from) {
+                this.title = to.meta.title;
+            },
+
+            title() {
+                document.title = this.title + ' | open.B'
             }
         },
 

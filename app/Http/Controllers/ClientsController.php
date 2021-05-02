@@ -14,9 +14,7 @@ class ClientsController extends Controller
 {
     public function index()
     {  
-        if ($this->requestUserIsClient()) {
-            return response([], 403);
-        };
+        $this->authorize('viewAny', Clients::class);
         
         $clients = Clients::whereHas('accounts', function (Builder $query) {
             $query->where('accounts.financial_institutions_id', '=', request()->user()->entity->id);
@@ -27,6 +25,8 @@ class ClientsController extends Controller
 
     public function store()
     {
+        $this->authorize('create', Clients::class);
+
         $client = Clients::create($this->validateData());
 
         return (new ClientsResource($client))
@@ -36,15 +36,15 @@ class ClientsController extends Controller
     
     public function show(Clients $client)
     {
-        if ($this->requestUserIsClient()) {
-           return response([], 403);
-        };
+        $this->authorize('view', $client);
 
         return new ClientsResource($client);
     }
     
     public function update(Clients $client)
     {
+        $this->authorize('update', $client);
+
         $client->update($this->validateData());
 
         return (new ClientsResource($client))
@@ -54,6 +54,8 @@ class ClientsController extends Controller
 
     public function destroy(Clients $client)
     {
+        $this->authorize('delete', $client);
+
         $client->delete();
 
         return response([], 204);
