@@ -23,6 +23,14 @@ class AccountsTest extends TestCase
     }
 
     /** @test */
+    public function a_list_of_accounts_can_be_retrived()
+    {
+        $response = $this->get('/api/accounts' . '?api_token=' .
+            $this->user->api_token);
+
+    }
+
+    /** @test */
     public function an_unauthenticated_user_should_be_redirected_to_login()
     {
         $response = $this->post('/api/accounts', 

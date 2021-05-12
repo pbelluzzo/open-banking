@@ -1,6 +1,8 @@
 <template>
-    
-    <div>
+    <div v-if="loading"> <!-- loading breaks update field / FIX THIS -->
+        Carregando... 
+    </div>
+    <div v-else>
         <div class="flex justify-between">
                 <a href="#" class="text-red-300" @click="$router.back()">
                     Voltar
@@ -49,6 +51,7 @@
                     'address': '',
                     'birthdate': ''
                 },
+                loading: true,
                 errors: null,
             }
         },
@@ -57,12 +60,12 @@
         axios.get('/api/clients/' + this.$route.params.id)
         .then(response => {
             this.form = response.data.data;
-
+            this.loading = false;
         })
         .catch(error => {
-
+            this.loading = false;
             if (error.response.status === 404) {
-                this.$router.push('/contacts');
+                this.$router.push('/');
             }
         });
         },
@@ -77,6 +80,7 @@
                         this.errors = errors.response.data.errors;
                     });
             },
+
         }
     }
 </script>

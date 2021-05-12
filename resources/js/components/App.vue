@@ -10,45 +10,13 @@
                     </router-link>
                     <div class="w-28 border-b-2 px-2 pt-0"></div>
 
-                    <div  v-if="userIsInstitution()">
-                        <p class="pt-12 pl-4 font-bold text-gray-400 text-sm pb-4">Clientes</p>
-                        <router-link to="/clients/create">
-                            <p class="pl-8 text-red-300 font-light">Adicionar Cliente</p>
-                        </router-link>
-                        <router-link to="/clients">
-                            <p class="pl-8 text-red-300 font-light">Buscar Clientes</p>
-                        </router-link>
+                    <div v-if="this.userIsInstitution()">
+                        <InstitutionsNav :owner="owner"/>
                     </div>
 
-                    <div  v-if="userIsInstitution()">
-                        <p class="pt-12 pl-4 font-bold text-gray-400 text-sm pb-4">Contas</p>
-                        <router-link to="/accounts">
-                            <p class="pl-8 text-red-300 font-light">Buscar Contas</p>
-                        </router-link>
-                        <router-link to="/contracts/create">
-                            <p class="pl-8 text-red-300 font-light">Contratar Produtos</p>
-                        </router-link>
-                    </div>
-
-                    <div v-if="userIsInstitution()">
-                        <p class="pt-12 pl-4 font-bold text-gray-400 text-sm pb-4">Produtos Financeiros</p>
-                        <router-link to="/financial_products/create">
-                            <p class="pl-8 text-red-300 font-light">Adicionar Produtos</p>
-                        </router-link>
-                        <router-link to="/financial_products">
-                            <p class="pl-8 text-red-300 font-light">Buscar Produtos</p>
-                        </router-link>        
-                    </div>
-
-                    <div v-if="userIsInstitution()">
-                        <p class="pt-12 pl-4 font-bold text-gray-400 text-sm pb-4">Compartilhamentos</p>
-                        <router-link to="/sharings/create">
-                            <p class="pl-8 text-red-300 font-light">Adicionar Compartilhamento</p>
-                        </router-link>
-                        <router-link to="/sharings">
-                            <p class="pl-8 text-red-300 font-light">Buscar Compartilhamentos</p>
-                        </router-link>        
-                    </div>
+                    <div v-else>
+                        <ClientsNav :owner="owner"/>
+                    </div> 
 
                     <div>
                         <router-link to="/logout">
@@ -62,7 +30,7 @@
                 <div class="h-16 px-6 border-b border-red-200 flex items-center justify-end">
                     <div class="pr-6">
                         <p v-if="userIsInstitution()" class="font-bold text-gray-400"> {{ owner.fantasy_name}}</p>
-                        
+                        <p v-else class="font-bold text-gray-400"> {{ owner.name}}</p>
                     </div>
                     <UserCircle :name="user.login" />
                 </div>
@@ -79,6 +47,8 @@
 
 <script>
     import UserCircle from './UserCircle';
+    import ClientsNav from './ClientsNav';
+    import InstitutionsNav from './InstitutionsNav';
 
     export default {
         name : "App",
@@ -89,6 +59,8 @@
 
         components: {
             UserCircle,
+            ClientsNav,
+            InstitutionsNav
         },
 
         data: function() {
@@ -132,7 +104,6 @@
 
             getUserOwner: function() {
                 if(this.userIsInstitution()){
-                    console.log('is institution');
                     axios.get('/api/financial_institutions/' + this.user.entity_id)
                     .then(response => {
                         this.owner = response.data.data;        
@@ -142,7 +113,7 @@
                     });
                 }
 
-                if(/** User is client */ false){
+                if(!this.userIsInstitution()){
                 axios.get('/api/clients/' + this.user.entity_id)
                     .then(response => {
                         this.owner = response.data.data;        

@@ -100,7 +100,6 @@ export default {
         },
 
         checkPersistance() {
-            console.log('called');
             this.persisted = this.sharing.acceptance_date != null;
         }
     }
