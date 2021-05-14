@@ -24,6 +24,14 @@
                 <button class="px-4 py-2 rounded text-sm text-green-500
                 border-2 border-green-500 font-bold mr-2 hover:no-underline hover:text-green-300 hover:border-green-300">Acessar compartilhamento</button>
             </div>
+            <div v-else-if="!userIsInstitution()" class="pt-6">
+                <form @submit.prevent="confirmSharing" class="pt-6">
+                    <button class="px-4 py-2 rounded text-sm text-green-500 border-2 border-green-500 font-bold
+                     mr-2 hover:no-underline hover:text-green-300 hover:border-green-300">Confirmar Compartilhamento</button>
+                </form>
+            </div>
+
+
 
         </div>            
 
@@ -53,7 +61,6 @@ export default {
                             this.loading = false;
                         })
                         .catch(error => {
-                            this.loading =false;
                         })
                 })
                 .catch(error => {
@@ -61,7 +68,6 @@ export default {
                     });
         })
         .catch(error => {
-            this.loading = false;
 
             if (error.response.status === 404) {
                 this.$router.push('/sharings');
@@ -91,7 +97,7 @@ export default {
         },
 
         async getClient() {
-            axios.get('/api/clients/' + this.sharing.clients_id)
+            await axios.get('/api/clients/' + this.sharing.clients_id)
                 .then(response=> {
                     this.client = response.data.data;
                 })
@@ -101,6 +107,14 @@ export default {
 
         checkPersistance() {
             this.persisted = this.sharing.acceptance_date != null;
+        },
+
+        userIsInstitution(){
+            return this.user.entity_type == 'App\\Models\\FinancialInstitutions';
+        },
+
+        confirmSharing(){
+            
         }
     }
 

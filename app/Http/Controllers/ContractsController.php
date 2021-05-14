@@ -11,6 +11,16 @@ class ContractsController extends Controller
 {
     public function index()
     {
+        $this->authorize('viewAny', Contracts::class);
+
+        if ($this->requestUserIsClient()){
+            $contracts = Contracts::whereHas('accounts', function (Builder $query) {
+                $query->where('accounts.clients_id', '=', request()->user()->entity->id);
+            })->get();
+
+            return ContractsResource::collection($contracts);
+        }
+
         $contracts = Contracts::whereHas('accounts', function (Builder $query) {
             $query->where('accounts.financial_institutions_id', '=', request()->user()->entity->id);
         })->get();
@@ -20,6 +30,8 @@ class ContractsController extends Controller
 
     public function store()
     {
+        $this->authorize('create', Contracts::class);
+
         $contract = Contracts::create($this->validateData());
 
         return (new ContractsResource($contract))
@@ -29,11 +41,15 @@ class ContractsController extends Controller
 
     public function show(Contracts $contract)
     {
+        $this->authorize('view', $contract);
+
         return new ContractsResource($contract);
     }
 
     public function update(Contracts $contract)
     {
+        $this->authorize('update', $contract);
+
         $contract->update($this->validateData());
 
         return (new ContractsResource($contract))
@@ -43,6 +59,8 @@ class ContractsController extends Controller
 
     public function destroy(Contracts $contract)
     {
+        $this->authorize('delete', $contract);
+
         $contract->delete();
     }
 
@@ -57,5 +75,10 @@ class ContractsController extends Controller
             'finished' => 'required|nullable'
         ]);
         return $data;
+    }
+
+    private function requestUserIsClient()
+    {
+        return get_class(request()->user()->entity) == 'App\Models\Clients';
     }
 }

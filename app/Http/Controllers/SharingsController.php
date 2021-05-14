@@ -11,13 +11,17 @@ class SharingsController extends Controller
 {
     public function index()
     {
-        $sharings = Sharings::where('sharings.destiny_institution_id', '=', request()->user()->entity->id)->get();
+        $this->authorize('viewAny', Sharings::class);
+
+        $sharings = $this->getIndex();
 
         return SharingsResource::collection($sharings);
     }
 
     public function store()
     {
+        $this->authorize('create', Sharings::class);
+
         $sharing = Sharings::create($this->validateData());
 
         return (new SharingsResource($sharing))
@@ -27,11 +31,15 @@ class SharingsController extends Controller
 
     public function show(Sharings $sharing)
     {
+        $this->authorize('view', $sharing);    
+
         return new SharingsResource($sharing);
     }
 
     public function update(Sharings $sharing)
     {
+        $this->authorize('update', $sharing);
+
         $sharing->update($this->validateData());
 
         return (new SharingsResource($sharing))
@@ -55,4 +63,12 @@ class SharingsController extends Controller
         ]);
         return $data;
     }
+
+    private function getIndex() {
+        if(requestUserIsClient()){
+            return Sharings::where('sharings.clients_id', '=', request()->user()->entity->id)->get();
+        }
+        return Sharings::where('sharings.destiny_institution_id', '=', request()->user()->entity->id)->get();
+    }
+
 }

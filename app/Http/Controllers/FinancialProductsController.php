@@ -30,9 +30,6 @@ class FinancialProductsController extends Controller
 
     public function show(FinancialProducts $financial_product)
     {
-        if ($this->requestUserIsClient()) {
-            return response([], 403);
-        };
  
         return new FinancialProductsResource($financial_product);
     }

@@ -2,12 +2,11 @@
 
 namespace App\Policies;
 
-use App\Models\Accounts;
+use App\Models\Sharings;
 use App\Models\User;
-use App\Models\FinancialInstitutions;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class AccountsPolicy
+class SharingsPolicy
 {
     use HandlesAuthorization;
 
@@ -26,14 +25,15 @@ class AccountsPolicy
      * Determine whether the user can view the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Accounts  $accounts
+     * @param  \App\Models\Sharings  $sharings
      * @return mixed
      */
-    public function view(User $user, Accounts $accounts)
+    public function view(User $user, Sharings $sharings)
     {
-        if($this->requestUserIsInstitution($user)) return true;
-        if($accounts->clients_id == $user->entity_id) return true;
-        return false;
+        if (requestUserIsClient()){
+            return $user->entity_id == $sharings->clients_id;
+        }
+        return true;
     }
 
     /**
@@ -44,29 +44,29 @@ class AccountsPolicy
      */
     public function create(User $user)
     {
-        return $this->requestUserIsInstitution($user);
+        return !requestUserIsClient();
     }
 
     /**
      * Determine whether the user can update the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Accounts  $accounts
+     * @param  \App\Models\Sharings  $sharings
      * @return mixed
      */
-    public function update(User $user, Accounts $accounts)
+    public function update(User $user, Sharings $sharings)
     {
-        return ($this->requestUserIsInstitution($user) && $accounts->financial_institutions_id == $user->entity_id);
+        return false;
     }
 
     /**
      * Determine whether the user can delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Accounts  $accounts
+     * @param  \App\Models\Sharings  $sharings
      * @return mixed
      */
-    public function delete(User $user, Accounts $accounts)
+    public function delete(User $user, Sharings $sharings)
     {
         return false;
     }
@@ -75,10 +75,10 @@ class AccountsPolicy
      * Determine whether the user can restore the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Accounts  $accounts
+     * @param  \App\Models\Sharings  $sharings
      * @return mixed
      */
-    public function restore(User $user, Accounts $accounts)
+    public function restore(User $user, Sharings $sharings)
     {
         return false;
     }
@@ -87,16 +87,11 @@ class AccountsPolicy
      * Determine whether the user can permanently delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Accounts  $accounts
+     * @param  \App\Models\Sharings  $sharings
      * @return mixed
      */
-    public function forceDelete(User $user, Accounts $accounts)
+    public function forceDelete(User $user, Sharings $sharings)
     {
         return false;
-    }
-
-    private function requestUserIsInstitution($user)
-    {
-        return $user->entity_type == FinancialInstitutions::class;
     }
 }

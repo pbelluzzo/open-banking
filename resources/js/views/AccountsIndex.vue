@@ -40,9 +40,9 @@ export default {
                 this.accounts = response.data.data;
                 this.searchClients(response.data.data)
                 .then(result=>{
-                console.log(result);
-                this.clients = result;
-                this.loading =false;
+                    console.log(result);
+                    this.clients = result;
+                    this.loading =false;
                 })
                 .catch(error=>{
                     console.log(error);

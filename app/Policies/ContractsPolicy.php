@@ -2,12 +2,12 @@
 
 namespace App\Policies;
 
-use App\Models\Accounts;
+use App\Models\Contracts;
 use App\Models\User;
 use App\Models\FinancialInstitutions;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class AccountsPolicy
+class ContractsPolicy
 {
     use HandlesAuthorization;
 
@@ -19,6 +19,8 @@ class AccountsPolicy
      */
     public function viewAny(User $user)
     {
+        if ($this->requestUserIsInstitution($user)) return true;
+
         return true;
     }
 
@@ -26,14 +28,16 @@ class AccountsPolicy
      * Determine whether the user can view the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Accounts  $accounts
+     * @param  \App\Models\Contracts  $contracts
      * @return mixed
      */
-    public function view(User $user, Accounts $accounts)
+    public function view(User $user, Contracts $contracts)
     {
-        if($this->requestUserIsInstitution($user)) return true;
-        if($accounts->clients_id == $user->entity_id) return true;
-        return false;
+        if (!$this->requestUserIsInstitution($user)){
+            return $user->entity_id == $contracts->accounts->clients_id;
+        }
+        return ($contracts->accounts->financial_institutions_id == $user->entity_id);
+
     }
 
     /**
@@ -51,34 +55,40 @@ class AccountsPolicy
      * Determine whether the user can update the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Accounts  $accounts
+     * @param  \App\Models\Contracts  $contracts
      * @return mixed
      */
-    public function update(User $user, Accounts $accounts)
+    public function update(User $user, Contracts $contracts)
     {
-        return ($this->requestUserIsInstitution($user) && $accounts->financial_institutions_id == $user->entity_id);
+        if (!$this->requestUserIsInstitution($user)){
+            return ($user->entity_id == $contracts->accounts->clients_id && $contracts->hiring_date == null);
+        }
+        return ($contracts->accounts->financial_institutions_id == $user->entity_id && $contracts->hiring_date == null);
     }
 
     /**
      * Determine whether the user can delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Accounts  $accounts
+     * @param  \App\Models\Contracts  $contracts
      * @return mixed
      */
-    public function delete(User $user, Accounts $accounts)
+    public function delete(User $user, Contracts $contracts)
     {
-        return false;
+        if (!$this->requestUserIsInstitution($user)){
+            return false;
+        }
+        return ($contracts->accounts->financial_institutions_id == $user->entity_id && $contracts->hiring_date == null);
     }
 
     /**
      * Determine whether the user can restore the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Accounts  $accounts
+     * @param  \App\Models\Contracts  $contracts
      * @return mixed
      */
-    public function restore(User $user, Accounts $accounts)
+    public function restore(User $user, Contracts $contracts)
     {
         return false;
     }
@@ -87,10 +97,10 @@ class AccountsPolicy
      * Determine whether the user can permanently delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Accounts  $accounts
+     * @param  \App\Models\Contracts  $contracts
      * @return mixed
      */
-    public function forceDelete(User $user, Accounts $accounts)
+    public function forceDelete(User $user, Contracts $contracts)
     {
         return false;
     }

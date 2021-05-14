@@ -29,6 +29,13 @@
             <p v-else class="pt-2 text-red-300 pl-4">Não Quitado</p>
             <p v-if="contract.hiring_date == null" class="pt-2 text-red-300 pl-4">Não Aceito</p>
             <p v-else class="pt-2 text-red-300 pl-4">Aceito</p>
+
+            <div v-if="contract.hiring_date == null && user.entity_type == 'App\\Models\\Clients'">
+                <form @submit.prevent="acceptContract" class="pt-6">
+                    <button class="px-4 py-2 rounded text-sm text-green-500 border-2 border-green-500 font-bold
+                    mr-2 hover:no-underline hover:text-green-300 hover:border-green-300">Aceitar Contrato</button>
+                </form>
+            </div>
         </div>            
 
     </div>
@@ -66,7 +73,37 @@ export default {
         return {
             loading: true,
             contract: null,
+            form: null,
         }
+    },
+    methods: {
+        acceptContract: function() {
+            this.setContractForm();
+            axios.patch('/api/contracts/' + this.contract.id , this.form)
+                .then(response => {
+                    this.$router.push(response.data.links.self);
+            })
+                .catch(errors => {
+                    this.errors = errors.response.data.errors;
+            });
+        },
+
+        setContractForm () {
+            this.form = {
+                'accounts_id' : this.contract.accounts_id,
+                'financial_products_id' : this.contract.financial_products_id,
+                'amount_invested' : this.contract.amount_invested,
+                'administration_fee' : this.contract.administration_fee,
+                'hiring_date' : this.getDate(),
+                'finished' : this.contract.finished
+            };
+        },
+
+        getDate () {
+            let today = new Date();
+            let now = today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear();
+            return now;
+        },
     }
 }
 </script>

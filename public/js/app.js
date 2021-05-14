@@ -3054,6 +3054,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+//
+//
 //
 //
 //
@@ -3087,7 +3097,15 @@ __webpack_require__.r(__webpack_exports__);
 
     axios.get('/api/contracts').then(function (response) {
       _this.contracts = response.data.data;
-      _this.loading = false;
+
+      _this.searchProducts(response.data.data).then(function (result) {
+        console.log(result);
+        _this.products = result;
+        _this.loading = false;
+      })["catch"](function (error) {
+        console.log(error);
+        alert('Não foi possível buscar os produtos associados aos contratos');
+      });
     })["catch"](function (error) {
       _this.loading = false;
       alert('Não foi possível buscar os contratos');
@@ -3096,10 +3114,68 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       loading: true,
+      products: null,
       contracts: null
     };
   },
-  methods: {}
+  methods: {
+    searchProducts: function searchProducts($contracts) {
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
+        var products, _loop, i;
+
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                products = [];
+                _loop = /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _loop(i) {
+                  return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _loop$(_context) {
+                    while (1) {
+                      switch (_context.prev = _context.next) {
+                        case 0:
+                          _context.next = 2;
+                          return axios.get('/api/financial_products/' + $contracts[i].data.financial_products_id).then(function (response) {
+                            products[i] = response.data.data;
+                          })["catch"](function (error) {
+                            console.log(error);
+                            alert('Problema ao buscar produto associado ao contrato ' + $contracts[i].data.id);
+                          });
+
+                        case 2:
+                        case "end":
+                          return _context.stop();
+                      }
+                    }
+                  }, _loop);
+                });
+                i = 0;
+
+              case 3:
+                if (!(i < $contracts.length)) {
+                  _context2.next = 8;
+                  break;
+                }
+
+                return _context2.delegateYield(_loop(i), "t0", 5);
+
+              case 5:
+                i++;
+                _context2.next = 3;
+                break;
+
+              case 8:
+                ;
+                return _context2.abrupt("return", products);
+
+              case 10:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee);
+      }))();
+    }
+  }
 });
 
 /***/ }),
@@ -3115,6 +3191,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -3172,8 +3255,36 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       loading: true,
-      contract: null
+      contract: null,
+      form: null
     };
+  },
+  methods: {
+    acceptContract: function acceptContract() {
+      var _this2 = this;
+
+      this.setContractForm();
+      axios.patch('/api/contracts/' + this.contract.id, this.form).then(function (response) {
+        _this2.$router.push(response.data.links.self);
+      })["catch"](function (errors) {
+        _this2.errors = errors.response.data.errors;
+      });
+    },
+    setContractForm: function setContractForm() {
+      this.form = {
+        'accounts_id': this.contract.accounts_id,
+        'financial_products_id': this.contract.financial_products_id,
+        'amount_invested': this.contract.amount_invested,
+        'administration_fee': this.contract.administration_fee,
+        'hiring_date': this.getDate(),
+        'finished': this.contract.finished
+      };
+    },
+    getDate: function getDate() {
+      var today = new Date();
+      var now = today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear();
+      return now;
+    }
   }
 });
 
@@ -3630,6 +3741,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -3658,28 +3786,53 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "SharingsIndex",
   components: {},
+  props: ['user'],
   mounted: function mounted() {
     var _this = this;
 
     axios.get('/api/sharings').then(function (response) {
       _this.sharings = response.data.data;
+
+      _this.searchInstitutions(_this.sharings).then(function (response) {
+        _this.institutions = response;
+
+        if (_this.userIsInstitution()) {
+          _this.searchClients(_this.sharings).then(function (response) {
+            _this.clients = response;
+            _this.loading = false;
+          })["catch"](function (error) {
+            console.log(error);
+            alert('Não foi possível buscar os clientes associados aos compartilhamentos');
+          });
+        } else {
+          _this.loading = false;
+        }
+      })["catch"](function (error) {
+        console.log(error);
+        alert('Não foi possível buscar as instituições associadas aos compartilhamentos');
+      });
     })["catch"](function (error) {
       _this.loading = false;
+      console.log(error);
       alert('Não foi possível buscar os compartilhamentos');
-    });
-    axios.get('/api/financial_institutions').then(function (response) {
-      _this.institutions = response.data.data;
-    })["catch"](function (error) {
-      _this.loading = false;
-      alert('Não foi possível buscar as institutições associadas aos compartilhamentos');
-    });
-    axios.get('/api/clients').then(function (response) {
-      _this.clients = response.data.data;
-      _this.loading = false;
-    })["catch"](function (error) {
-      _this.loading = false;
-      alert('Não foi possível buscar os clientes associados aos compartilhamentos');
-    });
+    }); //axios.get('/api/financial_institutions')
+    //    .then(response=> {
+    //        this.institutions = response.data.data;
+    //        this.loading = false;
+    //    })
+    //    .catch(error=> {
+    //        this.loading = false;
+    //        alert('Não foi possível buscar as institutições associadas aos compartilhamentos');
+    //    });      
+    //axios.get('/api/clients')
+    //    .then(response=> {
+    //        this.clients = response.data.data;
+    //        this.loading = false;
+    //    })
+    //    .catch(error=> {
+    //        this.loading = false;
+    //        alert('Não foi possível buscar os clientes associados aos compartilhamentos');
+    //    });
   },
   data: function data() {
     return {
@@ -3690,27 +3843,131 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   methods: {
-    searchClient: function searchClient($sharing) {
-      for (var i = 0; i < this.clients.length; i++) {
-        if (this.clients[i].data.id == $sharing.data.clients_id) {
-          return this.clients[i];
-        }
+    searchInstitutions: function searchInstitutions($sharings) {
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
+        var institutions, _loop, i;
 
-        ;
-      }
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                institutions = {
+                  origin: [],
+                  destiny: []
+                };
+                _loop = /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _loop(i) {
+                  return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _loop$(_context) {
+                    while (1) {
+                      switch (_context.prev = _context.next) {
+                        case 0:
+                          _context.next = 2;
+                          return axios.get('/api/financial_institutions/' + $sharings[i].data.origin_institution_id).then(function (response) {
+                            institutions.origin[i] = response.data.data;
+                          })["catch"](function (error) {
+                            console.log(error);
+                            alert('Problema ao buscar instituição de origem associada ao compartilhamento ' + $sharings[i].data.id);
+                          });
 
-      ;
+                        case 2:
+                          _context.next = 4;
+                          return axios.get('/api/financial_institutions/' + $sharings[i].data.destiny_institution_id).then(function (response) {
+                            institutions.destiny[i] = response.data.data;
+                          })["catch"](function (error) {
+                            console.log(error);
+                            alert('Problema ao buscar instituição destino associada ao compartilhamento ' + $sharings[i].data.id);
+                          });
+
+                        case 4:
+                        case "end":
+                          return _context.stop();
+                      }
+                    }
+                  }, _loop);
+                });
+                i = 0;
+
+              case 3:
+                if (!(i < $sharings.length)) {
+                  _context2.next = 8;
+                  break;
+                }
+
+                return _context2.delegateYield(_loop(i), "t0", 5);
+
+              case 5:
+                i++;
+                _context2.next = 3;
+                break;
+
+              case 8:
+                ;
+                return _context2.abrupt("return", institutions);
+
+              case 10:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee);
+      }))();
     },
-    searchInstitution: function searchInstitution($sharing) {
-      for (var i = 0; i < this.institutions.length; i++) {
-        if (this.institutions[i].data.id == $sharing.data.origin_institution_id) {
-          return this.institutions[i];
-        }
+    searchClients: function searchClients($sharings) {
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2() {
+        var clients, _loop2, i;
 
-        ;
-      }
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context4) {
+          while (1) {
+            switch (_context4.prev = _context4.next) {
+              case 0:
+                clients = [];
+                _loop2 = /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _loop2(i) {
+                  return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _loop2$(_context3) {
+                    while (1) {
+                      switch (_context3.prev = _context3.next) {
+                        case 0:
+                          _context3.next = 2;
+                          return axios.get('/api/clients/' + $sharings[i].data.clients_id).then(function (response) {
+                            clients[i] = response.data.data;
+                          })["catch"](function (error) {
+                            console.log(error);
+                            alert('Problema ao buscar cliente associado ao compartilhamento ' + $sharings[i].data.id);
+                          });
 
-      ;
+                        case 2:
+                        case "end":
+                          return _context3.stop();
+                      }
+                    }
+                  }, _loop2);
+                });
+                i = 0;
+
+              case 3:
+                if (!(i < $sharings.length)) {
+                  _context4.next = 8;
+                  break;
+                }
+
+                return _context4.delegateYield(_loop2(i), "t0", 5);
+
+              case 5:
+                i++;
+                _context4.next = 3;
+                break;
+
+              case 8:
+                return _context4.abrupt("return", clients);
+
+              case 9:
+              case "end":
+                return _context4.stop();
+            }
+          }
+        }, _callee2);
+      }))();
+    },
+    userIsInstitution: function userIsInstitution() {
+      return this.user.entity_type == 'App\\Models\\FinancialInstitutions';
     }
   }
 });
@@ -3768,6 +4025,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "SharingsShow",
   components: {},
@@ -3783,13 +4048,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           _this.checkPersistance();
 
           _this.loading = false;
-        })["catch"](function (error) {
-          _this.loading = false;
-        });
+        })["catch"](function (error) {});
       })["catch"](function (error) {});
     })["catch"](function (error) {
-      _this.loading = false;
-
       if (error.response.status === 404) {
         _this.$router.push('/sharings');
       }
@@ -3833,11 +4094,12 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                axios.get('/api/clients/' + _this3.sharing.clients_id).then(function (response) {
+                _context2.next = 2;
+                return axios.get('/api/clients/' + _this3.sharing.clients_id).then(function (response) {
                   _this3.client = response.data.data;
                 })["catch"](function (error) {});
 
-              case 1:
+              case 2:
               case "end":
                 return _context2.stop();
             }
@@ -3847,7 +4109,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     },
     checkPersistance: function checkPersistance() {
       this.persisted = this.sharing.acceptance_date != null;
-    }
+    },
+    userIsInstitution: function userIsInstitution() {
+      return this.user.entity_type == 'App\\Models\\FinancialInstitutions';
+    },
+    confirmSharing: function confirmSharing() {}
   }
 });
 
@@ -43614,7 +43880,7 @@ var render = function() {
                 ])
               : _vm._e(),
             _vm._v(" "),
-            _vm._l(_vm.contracts, function(contract) {
+            _vm._l(_vm.contracts, function(contract, index) {
               return _c(
                 "div",
                 { key: contract.id },
@@ -43629,7 +43895,13 @@ var render = function() {
                     [
                       _c("div", { staticClass: "pl-3" }, [
                         _c("p", { staticClass: "font-bold text-gray-400" }, [
-                          _vm._v("Contrato Nº " + _vm._s(contract.data.id))
+                          _vm._v(
+                            "Contrato Nº " +
+                              _vm._s(contract.data.id) +
+                              " - " +
+                              _vm._s(_vm.products[index].description) +
+                              " "
+                          )
                         ]),
                         _vm._v(" "),
                         _c("div", { staticClass: "flex pt-4" }, [
@@ -43646,7 +43918,15 @@ var render = function() {
                                 _vm._s(contract.data.administration_fee) +
                                 "%"
                             )
-                          ])
+                          ]),
+                          _vm._v(" "),
+                          contract.data.hiring_date == null
+                            ? _c("p", { staticClass: "text-red-400 pr-4" }, [
+                                _vm._v("Não Aceito")
+                              ])
+                            : _c("p", { staticClass: "text-red-400 pr-4" }, [
+                                _vm._v("Aceito")
+                              ])
                         ])
                       ])
                     ]
@@ -43787,7 +44067,35 @@ var render = function() {
               ])
             : _c("p", { staticClass: "pt-2 text-red-300 pl-4" }, [
                 _vm._v("Aceito")
+              ]),
+          _vm._v(" "),
+          _vm.contract.hiring_date == null &&
+          _vm.user.entity_type == "App\\Models\\Clients"
+            ? _c("div", [
+                _c(
+                  "form",
+                  {
+                    staticClass: "pt-6",
+                    on: {
+                      submit: function($event) {
+                        $event.preventDefault()
+                        return _vm.acceptContract($event)
+                      }
+                    }
+                  },
+                  [
+                    _c(
+                      "button",
+                      {
+                        staticClass:
+                          "px-4 py-2 rounded text-sm text-green-500 border-2 border-green-500 font-bold\n                mr-2 hover:no-underline hover:text-green-300 hover:border-green-300"
+                      },
+                      [_vm._v("Aceitar Contrato")]
+                    )
+                  ]
+                )
               ])
+            : _vm._e()
         ])
   ])
 }
@@ -44515,7 +44823,7 @@ var render = function() {
                 ])
               : _vm._e(),
             _vm._v(" "),
-            _vm._l(_vm.sharings, function(sharing) {
+            _vm._l(_vm.sharings, function(sharing, index) {
               return _c(
                 "div",
                 { key: sharing.id },
@@ -44528,32 +44836,81 @@ var render = function() {
                       attrs: { to: "/sharings/" + sharing.data.id }
                     },
                     [
-                      _c("div", { staticClass: "pl-3" }, [
-                        _c("p", { staticClass: "font-bold text-gray-400" }, [
-                          _vm._v(
-                            "Cliente: " +
-                              _vm._s(_vm.searchClient(sharing).data.name)
-                          )
-                        ]),
-                        _vm._v(" "),
-                        _c("div", { staticClass: "flex pt-4" }, [
-                          _c("p", { staticClass: "text-red-400 pr-4" }, [
-                            _vm._v(
-                              "Compartilhamento nº " + _vm._s(sharing.data.id)
-                            )
-                          ]),
-                          _vm._v(" "),
-                          _c("p", { staticClass: "text-red-400 pr-4" }, [
-                            _vm._v(
-                              "Banco de Origem: " +
-                                _vm._s(
-                                  _vm.searchInstitution(sharing).data
-                                    .fantasy_name
+                      _vm.userIsInstitution()
+                        ? _c("div", { staticClass: "pl-3" }, [
+                            _c(
+                              "p",
+                              { staticClass: "font-bold text-gray-400" },
+                              [
+                                _vm._v(
+                                  "Cliente: " + _vm._s(_vm.clients[index].name)
                                 )
-                            )
+                              ]
+                            ),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "flex pt-4" }, [
+                              _c("p", { staticClass: "text-red-400 pr-4" }, [
+                                _vm._v(
+                                  "Compartilhamento nº " +
+                                    _vm._s(sharing.data.id)
+                                )
+                              ]),
+                              _vm._v(" "),
+                              _c("p", { staticClass: "text-red-400 pr-4" }, [
+                                _vm._v(
+                                  "Instituição de Origem: " +
+                                    _vm._s(
+                                      _vm.institutions.origin[index]
+                                        .fantasy_name
+                                    )
+                                )
+                              ]),
+                              _vm._v(" "),
+                              _c("p", { staticClass: "text-red-400 pr-4" }, [
+                                _vm._v(
+                                  "Instituição de Destino: " +
+                                    _vm._s(
+                                      _vm.institutions.destiny[index]
+                                        .fantasy_name
+                                    )
+                                )
+                              ])
+                            ])
                           ])
-                        ])
-                      ])
+                        : _c("div", { staticClass: "pl-3" }, [
+                            _c(
+                              "p",
+                              { staticClass: "font-bold text-gray-400" },
+                              [
+                                _vm._v(
+                                  "Compartilhamento nº " +
+                                    _vm._s(sharing.data.id)
+                                )
+                              ]
+                            ),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "flex pt-4" }, [
+                              _c("p", { staticClass: "text-red-400 pr-4" }, [
+                                _vm._v(
+                                  "Instituição de Origem: " +
+                                    _vm._s(
+                                      _vm.institutions.origin[index]
+                                        .fantasy_name
+                                    )
+                                )
+                              ]),
+                              _vm._v(" "),
+                              _c("p", { staticClass: "text-red-400 pr-4" }, [
+                                _vm._v(
+                                  "Instituição de Destino: " +
+                                    _vm._s(
+                                      _vm.institutions.destiny[index]
+                                        .fantasy_name
+                                    )
+                                )
+                              ])
+                            ])
+                          ])
                     ]
                   )
                 ],
@@ -44657,6 +45014,31 @@ var render = function() {
                       "px-4 py-2 rounded text-sm text-green-500\n            border-2 border-green-500 font-bold mr-2 hover:no-underline hover:text-green-300 hover:border-green-300"
                   },
                   [_vm._v("Acessar compartilhamento")]
+                )
+              ])
+            : !_vm.userIsInstitution()
+            ? _c("div", { staticClass: "pt-6" }, [
+                _c(
+                  "form",
+                  {
+                    staticClass: "pt-6",
+                    on: {
+                      submit: function($event) {
+                        $event.preventDefault()
+                        return _vm.confirmSharing($event)
+                      }
+                    }
+                  },
+                  [
+                    _c(
+                      "button",
+                      {
+                        staticClass:
+                          "px-4 py-2 rounded text-sm text-green-500 border-2 border-green-500 font-bold\n                 mr-2 hover:no-underline hover:text-green-300 hover:border-green-300"
+                      },
+                      [_vm._v("Confirmar Compartilhamento")]
+                    )
+                  ]
                 )
               ])
             : _vm._e()

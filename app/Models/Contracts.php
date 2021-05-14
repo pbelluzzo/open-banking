@@ -33,7 +33,7 @@ class Contracts extends Model
     {
         if($hiring_date == null) return null;
         $newHiringDate = Carbon::parse($hiring_date);
-        return $HiringDate->format('d/m/Y');
+        return $newHiringDate->format('d/m/Y');
     }
 
     public function setHiringDateAttribute($hiring_date)
