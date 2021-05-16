@@ -3815,24 +3815,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       _this.loading = false;
       console.log(error);
       alert('Não foi possível buscar os compartilhamentos');
-    }); //axios.get('/api/financial_institutions')
-    //    .then(response=> {
-    //        this.institutions = response.data.data;
-    //        this.loading = false;
-    //    })
-    //    .catch(error=> {
-    //        this.loading = false;
-    //        alert('Não foi possível buscar as institutições associadas aos compartilhamentos');
-    //    });      
-    //axios.get('/api/clients')
-    //    .then(response=> {
-    //        this.clients = response.data.data;
-    //        this.loading = false;
-    //    })
-    //    .catch(error=> {
-    //        this.loading = false;
-    //        alert('Não foi possível buscar os clientes associados aos compartilhamentos');
-    //    });
+    });
   },
   data: function data() {
     return {
@@ -4033,6 +4016,15 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "SharingsShow",
   components: {},
@@ -4060,7 +4052,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     return {
       loading: true,
       client: null,
-      institution: null,
+      institution: {
+        origin: '',
+        destiny: ''
+      },
       sharing: null,
       persisted: ''
     };
@@ -4074,11 +4069,18 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                axios.get('/api/financial_institutions/' + _this2.sharing.origin_institution_id).then(function (response) {
-                  _this2.institution = response.data.data;
+                _context.next = 2;
+                return axios.get('/api/financial_institutions/' + _this2.sharing.origin_institution_id).then(function (response) {
+                  _this2.institution.origin = response.data.data;
                 })["catch"](function (error) {});
 
-              case 1:
+              case 2:
+                _context.next = 4;
+                return axios.get('/api/financial_institutions/' + _this2.sharing.destiny_institution_id).then(function (response) {
+                  _this2.institution.destiny = response.data.data;
+                })["catch"](function (error) {});
+
+              case 4:
               case "end":
                 return _context.stop();
             }
@@ -44965,10 +44967,30 @@ var render = function() {
             )
           ]),
           _vm._v(" "),
-          _c("div", { staticClass: "flex items-center pt-6" }, [
-            _c("p", { staticClass: "pl-4 text-xl" }, [
-              _vm._v("Cliente " + _vm._s(_vm.client.name))
-            ])
+          _c("div", { staticClass: "flex items-center pt-6 text-red-300" }, [
+            _vm.userIsInstitution()
+              ? _c("div", { staticClass: "flex flex-direction-row" }, [
+                  _c(
+                    "p",
+                    { staticClass: "pl-4 text-xl font-bold text-gray-400" },
+                    [_vm._v(" Cliente : ")]
+                  ),
+                  _vm._v(" "),
+                  _c("p", { staticClass: "pl-2 text-xl" }, [
+                    _vm._v(_vm._s(_vm.client.name))
+                  ])
+                ])
+              : _c("div", { staticClass: "flex flex-direction-row" }, [
+                  _c(
+                    "p",
+                    { staticClass: "pl-4 text-xl font-bold text-gray-400" },
+                    [_vm._v(" Institição destino : ")]
+                  ),
+                  _vm._v(" "),
+                  _c("p", { staticClass: "pl-2 text-xl" }, [
+                    _vm._v(_vm._s(_vm.institution.destiny.fantasy_name))
+                  ])
+                ])
           ]),
           _vm._v(" "),
           _c(
@@ -44984,11 +45006,11 @@ var render = function() {
           _c(
             "p",
             { staticClass: "pt-8 text-gray-400 font-bold uppercase font-xs" },
-            [_vm._v("Banco de Origin")]
+            [_vm._v("Instituição de Origem")]
           ),
           _vm._v(" "),
           _c("p", { staticClass: "pt-2 text-red-300 pl-4" }, [
-            _vm._v(_vm._s(_vm.institution.fantasy_name))
+            _vm._v(_vm._s(_vm.institution.origin.fantasy_name))
           ]),
           _vm._v(" "),
           _c(

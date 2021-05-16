@@ -8,14 +8,23 @@
                 </a>
             </div>
 
-            <div class="flex items-center pt-6">
-                <p class="pl-4 text-xl">Cliente {{client.name}}</p>
+            <div class="flex items-center pt-6 text-red-300">
+
+                <div v-if="userIsInstitution()" class="flex flex-direction-row">
+                    <p class="pl-4 text-xl font-bold text-gray-400"> Cliente : </p>                    
+                    <p class="pl-2 text-xl">{{client.name}}</p>
+                </div>
+
+                <div v-else class="flex flex-direction-row">
+                    <p class="pl-4 text-xl font-bold text-gray-400"> Institição destino : </p>
+                    <p class="pl-2 text-xl">{{ institution.destiny.fantasy_name }}</p>
+                </div>
             </div>
 
             <p class="pt-8 text-gray-400 font-bold uppercase font-xs">Identificador do Compartilhamento</p>
             <p class="pt-2 text-red-300 pl-4">{{ sharing.id }}</p>
-            <p class="pt-8 text-gray-400 font-bold uppercase font-xs">Banco de Origin</p>
-            <p class="pt-2 text-red-300 pl-4">{{ institution.fantasy_name}}</p>
+            <p class="pt-8 text-gray-400 font-bold uppercase font-xs">Instituição de Origem</p>
+            <p class="pt-2 text-red-300 pl-4">{{ institution.origin.fantasy_name}}</p>
             <p class="pt-8 text-gray-400 font-bold uppercase font-xs">Compartilhamento Válido</p>
             <p v-if="persisted" class="pt-2 text-red-300 pl-4">Sim</p>
             <p v-else class="pt-2 text-red-300 pl-4">Não</p>
@@ -80,7 +89,10 @@ export default {
         return {
             loading: true,
             client: null,
-            institution: null,
+            institution: {
+                origin : '',
+                destiny : '',
+            },
             sharing: null,
             persisted: '',
         }
@@ -88,9 +100,15 @@ export default {
 
     methods: {
         async getInstitution() {
-            axios.get('/api/financial_institutions/' + this.sharing.origin_institution_id)
+            await axios.get('/api/financial_institutions/' + this.sharing.origin_institution_id)
                 .then(response=> {
-                    this.institution = response.data.data;
+                    this.institution.origin = response.data.data;
+            })
+                .catch(error=> {
+            });
+            await axios.get('/api/financial_institutions/' + this.sharing.destiny_institution_id)
+                .then(response=> {
+                    this.institution.destiny = response.data.data;
             })
                 .catch(error=> {
             });

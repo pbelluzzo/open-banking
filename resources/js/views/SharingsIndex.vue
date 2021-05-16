@@ -76,24 +76,6 @@ export default {
                 console.log(error);
                 alert('Não foi possível buscar os compartilhamentos');
             });
-        //axios.get('/api/financial_institutions')
-        //    .then(response=> {
-        //        this.institutions = response.data.data;
-        //        this.loading = false;
-        //    })
-        //    .catch(error=> {
-        //        this.loading = false;
-        //        alert('Não foi possível buscar as institutições associadas aos compartilhamentos');
-        //    });      
-        //axios.get('/api/clients')
-        //    .then(response=> {
-        //        this.clients = response.data.data;
-        //        this.loading = false;
-        //    })
-        //    .catch(error=> {
-        //        this.loading = false;
-        //        alert('Não foi possível buscar os clientes associados aos compartilhamentos');
-        //    });
             
     },
 
