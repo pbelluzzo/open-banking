@@ -57,9 +57,9 @@ class FinancialProductsController extends Controller
     {
         $data = request()->validate([
             'financial_institutions_id' => 'required',
-            'description' => 'required',
-            'minimum_value'=> 'required',
-            'administration_fee' => 'required'
+            'description' => 'required|unique:financial_products,description',
+            'minimum_value'=> 'required|min:1|unique:financial_products,minimum_value',
+            'administration_fee' => 'required|min:0|max:100,unique:financial_products,administration_fee'
         ]);
         return $data;
     }

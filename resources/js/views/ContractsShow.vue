@@ -36,6 +36,9 @@
                     mr-2 hover:no-underline hover:text-green-300 hover:border-green-300">Aceitar Contrato</button>
                 </form>
             </div>
+            <div v-if="errors != null">
+                <p class="pt-2 text-red-500 pl-4 font-bold text-sm animate-pulse">{{ errors }}!</p>
+            </div>
         </div>            
 
     </div>
@@ -74,16 +77,19 @@ export default {
             loading: true,
             contract: null,
             form: null,
+            errors: null,
         }
     },
     methods: {
         acceptContract: function() {
+            this.loading = true;
             this.setContractForm();
             axios.patch('/api/contracts/' + this.contract.id , this.form)
                 .then(response => {
-                    this.$router.push(response.data.links.self);
+                    this.$router.push('/contracts');
             })
                 .catch(errors => {
+                    this.loading = false;
                     this.errors = errors.response.data.errors;
             });
         },

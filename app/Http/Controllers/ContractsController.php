@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\Contracts;
+use App\Events\ContractAccepted;
 use App\Http\Resources\Contracts as ContractsResource;
 
 class ContractsController extends Controller
@@ -49,8 +50,21 @@ class ContractsController extends Controller
     public function update(Contracts $contract)
     {
         $this->authorize('update', $contract);
+        
+        $updatedContract = $this->validateData();
 
-        $contract->update($this->validateData());
+        if($updatedContract['hiring_date'] != null){
+            if ($contract->accounts->balance < $updatedContract['amount_invested']){
+                return response(['errors' => 'Saldo Insuficiente'], 400);
+            }
+            try {
+                ContractAccepted::dispatch($contract);
+            } catch (Exception $exception) {
+                echo ($exception);
+            }
+        }
+
+        $contract->update($updatedContract);
 
         return (new ContractsResource($contract))
             ->response()

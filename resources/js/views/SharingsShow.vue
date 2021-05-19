@@ -29,14 +29,19 @@
             <p v-if="persisted" class="pt-2 text-red-300 pl-4">Sim</p>
             <p v-else class="pt-2 text-red-300 pl-4">Não</p>
 
-            <div v-if="persisted" class="pt-6">
+            <div v-if="persisted && userIsInstitution()" class="pt-6">
                 <button class="px-4 py-2 rounded text-sm text-green-500
                 border-2 border-green-500 font-bold mr-2 hover:no-underline hover:text-green-300 hover:border-green-300">Acessar compartilhamento</button>
             </div>
-            <div v-else-if="!userIsInstitution()" class="pt-6">
-                <form @submit.prevent="confirmSharing" class="pt-6">
+            <div v-else-if="!userIsInstitution()" class="flex flex-direction-row pt-6">
+                <form @submit.prevent="confirmSharing" v-if="sharing.acceptance_date == null">
                     <button class="px-4 py-2 rounded text-sm text-green-500 border-2 border-green-500 font-bold
                      mr-2 hover:no-underline hover:text-green-300 hover:border-green-300">Confirmar Compartilhamento</button>
+                </form>
+
+                <form @submit.prevent="deleteSharing" class="pl-4">
+                    <button class="px-4 py-2 rounded text-sm text-red-500 border-2 border-red-500 font-bold 
+                    hover:no-underline hover:text-red-300 hover:border-red-300">Encerrar Compartilhamento</button>
                 </form>
             </div>
 
@@ -132,7 +137,43 @@ export default {
         },
 
         confirmSharing(){
-            
+            let form = this.getForm();
+            form.acceptance_date = this.getDate();
+            axios.patch('/api/sharings/' + this.$route.params.id, form)
+                    .then(response => {
+                        this.$router.push('/sharings');
+                    })
+                    .catch(errors => {
+                        this.errors = errors.response.data.errors;
+                        alert("Não foi possível confirmar o compartilhamento");
+                    });
+        },
+
+        deleteSharing(){
+            axios.delete('/api/sharings/' + this.$route.params.id, form)
+                    .then(response => {
+                        this.$router.push('/sharings');
+                    })
+                    .catch(errors => {
+                        this.errors = errors.response.data.errors;
+                        alert("Não foi possível encerrar o compartilhamento");
+                    });
+        },
+
+        getDate () {
+            let today = new Date();
+            let now = today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear();
+            return now;
+        },
+
+        getForm() {
+            return {
+                'clients_id' : this.sharing.clients_id,
+                'origin_institution_id' : this.sharing.origin_institution_id,
+                'destiny_institution_id' : this.sharing.destiny_institution_id,
+                'acceptance_date' : this.sharing.acceptance_date,
+                'xml_path' : this.sharing.xml_path
+            };
         }
     }
 

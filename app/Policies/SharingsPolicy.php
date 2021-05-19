@@ -56,7 +56,7 @@ class SharingsPolicy
      */
     public function update(User $user, Sharings $sharings)
     {
-        return false;
+        return requestUserIsClient();
     }
 
     /**
@@ -68,6 +68,9 @@ class SharingsPolicy
      */
     public function delete(User $user, Sharings $sharings)
     {
+        if (requestUserIsClient()){
+            return $user->entity_id == $sharings->clients_id;
+        }
         return false;
     }
 

@@ -2451,6 +2451,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
 //
 //
 //
@@ -2516,52 +2524,74 @@ __webpack_require__.r(__webpack_exports__);
   mounted: function mounted() {
     var _this = this;
 
+    var getClient = /*#__PURE__*/function () {
+      var _ref = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
+        var response;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                _context.prev = 0;
+                _context.next = 3;
+                return axios.get('/api/clients/' + _this.account.clients_id);
+
+              case 3:
+                response = _context.sent;
+                _this.client = response.data.data;
+                _context.next = 10;
+                break;
+
+              case 7:
+                _context.prev = 7;
+                _context.t0 = _context["catch"](0);
+                alert("Problema ao buscar cliente relacionado à conta");
+
+              case 10:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, null, [[0, 7]]);
+      }));
+
+      return function getClient() {
+        return _ref.apply(this, arguments);
+      };
+    }();
+
     axios.get('/api/accounts/' + this.$route.params.id).then(function (response) {
       _this.account = response.data.data;
+      getClient();
+      axios.get('/api/contracts').then(function (response) {
+        _this.contracts = response.data.data;
+
+        _this.searchContracts();
+
+        _this.loading = false;
+      })["catch"](function (error) {
+        _this.loading = false;
+        alert('Não foi possível buscar os contratos associados à conta');
+      });
     })["catch"](function (error) {
-      _this.loading = false;
+      alert("Problema ao buscar conta");
 
       if (error.response.status === 404) {
         _this.$router.push('/accounts');
       }
-    });
-    axios.get('/api/clients').then(function (response) {
-      _this.clients = response.data.data;
-    })["catch"](function (error) {
-      _this.loading = false;
-      alert('Não foi possível buscar os clientes associados às contas');
-    });
-    axios.get('/api/contracts').then(function (response) {
-      _this.contracts = response.data.data;
-
-      _this.searchContracts();
-
-      _this.loading = false;
-    })["catch"](function (error) {
-      _this.loading = false;
-      alert('Não foi possível buscar os contratos associados às contas');
     });
   },
   data: function data() {
     return {
       loading: true,
       account: null,
-      clients: null,
+      client: null,
       contracts: null,
       accountContracts: []
     };
   },
   methods: {
-    searchClient: function searchClient($account) {
-      for (var i = 0; i < this.clients.length; i++) {
-        if (this.clients[i].data.id == $account.clients_id) {
-          return this.clients[i];
-        }
-
-        ;
-      }
-
-      ;
+    userIsInstitution: function userIsInstitution() {
+      return this.user.entity_type == 'App\\Models\\FinancialInstitutions';
     },
     searchContracts: function searchContracts() {
       for (var i = 0; i < this.contracts.length; i++) {
@@ -3234,6 +3264,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "ContractsShow",
   components: {},
@@ -3256,17 +3289,20 @@ __webpack_require__.r(__webpack_exports__);
     return {
       loading: true,
       contract: null,
-      form: null
+      form: null,
+      errors: null
     };
   },
   methods: {
     acceptContract: function acceptContract() {
       var _this2 = this;
 
+      this.loading = true;
       this.setContractForm();
       axios.patch('/api/contracts/' + this.contract.id, this.form).then(function (response) {
-        _this2.$router.push(response.data.links.self);
+        _this2.$router.push('/contracts');
       })["catch"](function (errors) {
+        _this2.loading = false;
         _this2.errors = errors.response.data.errors;
       });
     },
@@ -4025,6 +4061,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "SharingsShow",
   components: {},
@@ -4115,7 +4156,42 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     userIsInstitution: function userIsInstitution() {
       return this.user.entity_type == 'App\\Models\\FinancialInstitutions';
     },
-    confirmSharing: function confirmSharing() {}
+    confirmSharing: function confirmSharing() {
+      var _this4 = this;
+
+      var form = this.getForm();
+      form.acceptance_date = this.getDate();
+      axios.patch('/api/sharings/' + this.$route.params.id, form).then(function (response) {
+        _this4.$router.push('/sharings');
+      })["catch"](function (errors) {
+        _this4.errors = errors.response.data.errors;
+        alert("Não foi possível confirmar o compartilhamento");
+      });
+    },
+    deleteSharing: function deleteSharing() {
+      var _this5 = this;
+
+      axios["delete"]('/api/sharings/' + this.$route.params.id, form).then(function (response) {
+        _this5.$router.push('/sharings');
+      })["catch"](function (errors) {
+        _this5.errors = errors.response.data.errors;
+        alert("Não foi possível encerrar o compartilhamento");
+      });
+    },
+    getDate: function getDate() {
+      var today = new Date();
+      var now = today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear();
+      return now;
+    },
+    getForm: function getForm() {
+      return {
+        'clients_id': this.sharing.clients_id,
+        'origin_institution_id': this.sharing.origin_institution_id,
+        'destiny_institution_id': this.sharing.destiny_institution_id,
+        'acceptance_date': this.sharing.acceptance_date,
+        'xml_path': this.sharing.xml_path
+      };
+    }
   }
 });
 
@@ -43016,38 +43092,38 @@ var render = function() {
               [_vm._v("\n                Voltar\n            ")]
             ),
             _vm._v(" "),
-            _c(
-              "div",
-              [
-                _c(
-                  "router-link",
-                  {
-                    staticClass:
-                      "px-4 py-2 rounded text-sm text-green-500\n                border-2 border-green-500 font-bold mr-2 hover:no-underline hover:text-green-300 hover:border-green-300",
-                    attrs: { to: "/accounts/" + _vm.account.id + "/edit" }
-                  },
-                  [_vm._v("Editar")]
-                ),
-                _vm._v(" "),
-                _c(
-                  "a",
-                  {
-                    staticClass:
-                      "px-4 py-2 rounded text-sm text-red-500 border-2 border-red-500 font-bold \n                hover:no-underline hover:text-red-300 hover:border-red-300",
-                    attrs: { href: "#" }
-                  },
-                  [_vm._v("Encerrar")]
+            _vm.userIsInstitution()
+              ? _c(
+                  "div",
+                  [
+                    _c(
+                      "router-link",
+                      {
+                        staticClass:
+                          "px-4 py-2 rounded text-sm text-green-500\n                border-2 border-green-500 font-bold mr-2 hover:no-underline hover:text-green-300 hover:border-green-300",
+                        attrs: { to: "/accounts/" + _vm.account.id + "/edit" }
+                      },
+                      [_vm._v("Editar")]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "a",
+                      {
+                        staticClass:
+                          "px-4 py-2 rounded text-sm text-red-500 border-2 border-red-500 font-bold \n                hover:no-underline hover:text-red-300 hover:border-red-300",
+                        attrs: { href: "#" }
+                      },
+                      [_vm._v("Encerrar")]
+                    )
+                  ],
+                  1
                 )
-              ],
-              1
-            )
+              : _vm._e()
           ]),
           _vm._v(" "),
           _c("div", { staticClass: "flex items-center pt-6" }, [
             _c("p", { staticClass: "pl-4 text-xl text-gray-400" }, [
-              _vm._v(
-                "Cliente: " + _vm._s(_vm.searchClient(_vm.account).data.name)
-              )
+              _vm._v("Cliente: " + _vm._s(_vm.client.name))
             ])
           ]),
           _vm._v(" "),
@@ -44097,6 +44173,19 @@ var render = function() {
                   ]
                 )
               ])
+            : _vm._e(),
+          _vm._v(" "),
+          _vm.errors != null
+            ? _c("div", [
+                _c(
+                  "p",
+                  {
+                    staticClass:
+                      "pt-2 text-red-500 pl-4 font-bold text-sm animate-pulse"
+                  },
+                  [_vm._v(_vm._s(_vm.errors) + "!")]
+                )
+              ])
             : _vm._e()
         ])
   ])
@@ -45027,7 +45116,7 @@ var render = function() {
                 _vm._v("Não")
               ]),
           _vm._v(" "),
-          _vm.persisted
+          _vm.persisted && _vm.userIsInstitution()
             ? _c("div", { staticClass: "pt-6" }, [
                 _c(
                   "button",
@@ -45039,15 +45128,39 @@ var render = function() {
                 )
               ])
             : !_vm.userIsInstitution()
-            ? _c("div", { staticClass: "pt-6" }, [
+            ? _c("div", { staticClass: "flex flex-direction-row pt-6" }, [
+                _vm.sharing.acceptance_date == null
+                  ? _c(
+                      "form",
+                      {
+                        on: {
+                          submit: function($event) {
+                            $event.preventDefault()
+                            return _vm.confirmSharing($event)
+                          }
+                        }
+                      },
+                      [
+                        _c(
+                          "button",
+                          {
+                            staticClass:
+                              "px-4 py-2 rounded text-sm text-green-500 border-2 border-green-500 font-bold\n                 mr-2 hover:no-underline hover:text-green-300 hover:border-green-300"
+                          },
+                          [_vm._v("Confirmar Compartilhamento")]
+                        )
+                      ]
+                    )
+                  : _vm._e(),
+                _vm._v(" "),
                 _c(
                   "form",
                   {
-                    staticClass: "pt-6",
+                    staticClass: "pl-4",
                     on: {
                       submit: function($event) {
                         $event.preventDefault()
-                        return _vm.confirmSharing($event)
+                        return _vm.deleteSharing($event)
                       }
                     }
                   },
@@ -45056,9 +45169,9 @@ var render = function() {
                       "button",
                       {
                         staticClass:
-                          "px-4 py-2 rounded text-sm text-green-500 border-2 border-green-500 font-bold\n                 mr-2 hover:no-underline hover:text-green-300 hover:border-green-300"
+                          "px-4 py-2 rounded text-sm text-red-500 border-2 border-red-500 font-bold \n                hover:no-underline hover:text-red-300 hover:border-red-300"
                       },
-                      [_vm._v("Confirmar Compartilhamento")]
+                      [_vm._v("Encerrar Compartilhamento")]
                     )
                   ]
                 )

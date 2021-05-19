@@ -6,7 +6,7 @@
                 <a href="#" class="text-red-300" @click="$router.back()">
                     Voltar
                 </a>
-                <div>
+                <div v-if="userIsInstitution()">
                     <router-link :to="'/accounts/' + account.id + '/edit'" class="px-4 py-2 rounded text-sm text-green-500
                     border-2 border-green-500 font-bold mr-2 hover:no-underline hover:text-green-300 hover:border-green-300">Editar</router-link>
                     <a href="#" class="px-4 py-2 rounded text-sm text-red-500 border-2 border-red-500 font-bold 
@@ -15,7 +15,7 @@
             </div>
 
             <div class="flex items-center pt-6">
-                <p class="pl-4 text-xl text-gray-400">Cliente: {{searchClient(account).data.name}}</p>
+                <p class="pl-4 text-xl text-gray-400">Cliente: {{client.name}}</p>
             </div>
 
             <div class="pb-6">
@@ -68,36 +68,36 @@ export default {
     ],
 
     mounted() {
+        const getClient = async () => {
+            try {
+                let response = await axios.get('/api/clients/' + this.account.clients_id);
+                this.client = response.data.data;
+            }
+            catch (error) {
+                alert("Problema ao buscar cliente relacionado à conta");
+            }
+        }
         axios.get('/api/accounts/' + this.$route.params.id)
         .then(response => {
             this.account = response.data.data;
-
+            getClient();
+                    axios.get('/api/contracts')
+                        .then(response=> {
+                            this.contracts = response.data.data;
+                            this.searchContracts();
+                            this.loading = false;
+                        })
+                        .catch(error => {
+                            this.loading = false;
+                            alert('Não foi possível buscar os contratos associados à conta');
+                        });
         })
         .catch(error => {
-            this.loading = false;
-
+            alert("Problema ao buscar conta");
             if (error.response.status === 404) {
                 this.$router.push('/accounts');
             }
         });
-        axios.get('/api/clients')
-            .then(response=> {
-                this.clients = response.data.data;
-            })
-            .catch(error=> {
-                this.loading = false;
-                alert('Não foi possível buscar os clientes associados às contas');
-            });
-        axios.get('/api/contracts')
-            .then(response=> {
-                this.contracts = response.data.data;
-                this.searchContracts();
-                this.loading = false;
-            })
-            .catch(error => {
-                this.loading = false;
-                alert('Não foi possível buscar os contratos associados às contas');
-            });
 
         
     },
@@ -105,19 +105,16 @@ export default {
         return {
             loading: true,
             account: null,
-            clients: null,
+            client: null,
             contracts: null,
             accountContracts: [],
         }
+
     },
 
     methods: {
-        searchClient: function ($account) {
-            for(let i = 0; i < this.clients.length; i++) {
-                if (this.clients[i].data.id == $account.clients_id){
-                    return this.clients[i];
-                };
-            };
+        userIsInstitution(){
+            return this.user.entity_type == 'App\\Models\\FinancialInstitutions';
         },
 
         searchContracts: function () {

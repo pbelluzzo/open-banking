@@ -7,6 +7,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\Models\Accounts;
 use App\Models\User;
+use App\Http\Controllers\AccountsController;
 
 class AccountsTest extends TestCase
 {
@@ -121,6 +122,22 @@ class AccountsTest extends TestCase
             ['api_token' => $this->user->api_token]);
 
         $this->assertCount(0,Accounts::all());
+    }
+
+    /** @test */
+    public function an_account_can_be_debted()
+    {
+        $this->withoutExceptionHandling();
+
+        $account = Accounts::factory()->create();
+
+        $balance = $account->balance;
+
+        var_dump($balance);
+
+        (new AccountsController)->debtAccount($account, 100);
+
+        $this->assertEquals($balance - 100, $account->balance);
     }
 
     private function getFakeData()

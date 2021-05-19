@@ -49,6 +49,8 @@ class SharingsController extends Controller
 
     public function destroy(Sharings $sharing)
     {
+        $this->authorize('delete',$sharing);
+
         $sharing->delete();
     }
 
