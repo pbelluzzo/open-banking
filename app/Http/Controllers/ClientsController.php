@@ -27,6 +27,15 @@ class ClientsController extends Controller
     {
         $this->authorize('create', Clients::class);
 
+        if ($this->clientExists($this->validateData()['cpf'])){
+
+            $client = Clients::where('cpf', '=', $this->validateData()['cpf'])->first();
+
+            return (new ClientsResource($client))
+                ->response()
+                ->setStatusCode(201);
+        };
+
         $client = Clients::create($this->validateData());
 
         return (new ClientsResource($client))
@@ -64,6 +73,17 @@ class ClientsController extends Controller
     private function requestUserIsClient()
     {
         return get_class(request()->user()->entity) == 'App\Models\Clients';
+    }
+
+    private function clientExists($cpf)
+    {
+        $client = Clients::where('cpf', '=', $this->validateData()['cpf'])->firstOrFail();
+
+        if ($client == null) {
+            return false;
+        }
+
+        return true;
     }
 
     private function validateData()

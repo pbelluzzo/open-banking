@@ -168,11 +168,11 @@ export default {
 
         getForm() {
             return {
-                'clients_id' : this.sharing.clients_id,
-                'origin_institution_id' : this.sharing.origin_institution_id,
-                'destiny_institution_id' : this.sharing.destiny_institution_id,
+                //'clients_id' : this.sharing.clients_id,
+                //'origin_institution_id' : this.sharing.origin_institution_id,
+                //'destiny_institution_id' : this.sharing.destiny_institution_id,
                 'acceptance_date' : this.sharing.acceptance_date,
-                'xml_path' : this.sharing.xml_path
+                ///'xml_path' : this.sharing.xml_path
             };
         }
     }

@@ -4185,11 +4185,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     },
     getForm: function getForm() {
       return {
-        'clients_id': this.sharing.clients_id,
-        'origin_institution_id': this.sharing.origin_institution_id,
-        'destiny_institution_id': this.sharing.destiny_institution_id,
-        'acceptance_date': this.sharing.acceptance_date,
-        'xml_path': this.sharing.xml_path
+        //'clients_id' : this.sharing.clients_id,
+        //'origin_institution_id' : this.sharing.origin_institution_id,
+        //'destiny_institution_id' : this.sharing.destiny_institution_id,
+        'acceptance_date': this.sharing.acceptance_date ///'xml_path' : this.sharing.xml_path
+
       };
     }
   }

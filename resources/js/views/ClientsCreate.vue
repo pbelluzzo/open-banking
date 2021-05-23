@@ -52,7 +52,6 @@
                     'balance' : 0,
                     'ended_in' : null
                 },
-
                 errors: null,
             }
         },

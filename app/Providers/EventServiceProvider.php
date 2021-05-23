@@ -8,6 +8,8 @@ use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvi
 use Illuminate\Support\Facades\Event;
 use App\Events\ContractAccepted;
 use App\Listeners\DebtAccount; 
+use App\Events\SharingConfirmed;
+use App\Listeners\GenerateSharingXML; 
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -22,6 +24,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         ContractAccepted::class => [
             DebtAccount::class,
+        ],
+        SharingConfirmed::class => [
+            GenerateSharingXML::class,
         ]
     ];
 

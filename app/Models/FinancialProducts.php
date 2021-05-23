@@ -23,7 +23,7 @@ class FinancialProducts extends Model
 
     public function contracts()
     {
-        return $this->belongsTo(Contracts::class);
+        return $this->hasMany(Contracts::class);
     }
 
     public function financialInstitutions()

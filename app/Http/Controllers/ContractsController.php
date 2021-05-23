@@ -14,17 +14,7 @@ class ContractsController extends Controller
     {
         $this->authorize('viewAny', Contracts::class);
 
-        if ($this->requestUserIsClient()){
-            $contracts = Contracts::whereHas('accounts', function (Builder $query) {
-                $query->where('accounts.clients_id', '=', request()->user()->entity->id);
-            })->get();
-
-            return ContractsResource::collection($contracts);
-        }
-
-        $contracts = Contracts::whereHas('accounts', function (Builder $query) {
-            $query->where('accounts.financial_institutions_id', '=', request()->user()->entity->id);
-        })->get();
+        $contracts = $this->getIndex(request()->user()->entity->id);
 
         return ContractsResource::collection($contracts);
     }
@@ -76,6 +66,33 @@ class ContractsController extends Controller
         $this->authorize('delete', $contract);
 
         $contract->delete();
+    }
+
+    private function getIndex($entity_id)
+    {
+        if ($this->requestUserIsClient()){
+            $contracts = Contracts::whereHas('accounts', function (Builder $query) use ($entity_id){
+                $query->where('accounts.clients_id', '=', $entity_id);
+            })->get();
+
+            return $contracts;
+        }
+
+        $contracts = Contracts::whereHas('accounts', function (Builder $query) use ($entity_id){
+            $query->where('accounts.financial_institutions_id', '=', $entity_id);
+        })->get();
+
+        return $contracts;
+    }
+
+    public function getIndexFromInstitution($entity_id, $institution_Id)
+    {
+        $contracts = Contracts::whereHas('accounts', function (Builder $query) use ($entity_id, $institution_Id){
+            $query->where('accounts.clients_id', '=', $entity_id)
+            ->where('accounts.financial_institutions_id', '=', $institution_Id);
+            })->get();
+
+        return $contracts;
     }
 
     private function validateData()

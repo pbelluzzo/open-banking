@@ -53,6 +53,24 @@ class AccountsController extends Controller
         $account->delete();
     }
 
+    public function getClientAccountInInstitution($clientId, $originInstitutionId) 
+    {
+        $account = Accounts::where('accounts.financial_institutions_id', '=', $originInstitutionId)
+                ->where('accounts.clients_id', '=', $clientId)
+                ->get();
+        return $account;
+    }
+
+    private function getAccountsIndex($entity_id)
+    {
+        if ($this->requestUserIsInstitution()){ 
+            $accounts = Accounts::where('financial_institutions_id', '=', $entity_id)->get();
+            return $accounts;
+        }
+        $accounts = Accounts::where('clients_id', '=', $entity_id)->get();
+        return $accounts;
+    } 
+
     private function validateData()
     {
         $data = request()->validate([
@@ -74,13 +92,4 @@ class AccountsController extends Controller
         return request()->user()->entity_type == 'App\Models\FinancialInstitutions';
     }
 
-    private function getAccountsIndex($entity_id)
-    {
-        if ($this->requestUserIsInstitution()){ 
-            $accounts = Accounts::where('financial_institutions_id', '=', $entity_id)->get();
-            return $accounts;
-        }
-        $accounts = Accounts::where('clients_id', '=', $entity_id)->get();
-        return $accounts;
-    }
 }

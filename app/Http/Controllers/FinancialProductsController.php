@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 use App\Models\FinancialProducts;
 use App\Http\Resources\FinancialProducts as FinancialProductsResource;
 
@@ -46,6 +48,20 @@ class FinancialProductsController extends Controller
     public function destroy(FinancialProducts $financial_product)
     {
         $financial_product->delete();
+    }
+
+    public function getContractedProducts($clientId, $institutionId)
+    {
+        $contractedProducts = 
+        DB::table('financial_products')
+        ->join('contracts', 'financial_products.id', '=', 'contracts.financial_products_id')
+        ->join('accounts', 'contracts.accounts_id', '=', 'accounts.id')
+        ->select('financial_products.*')
+        ->where('accounts.clients_id','=',$clientId)
+        ->where('financial_products.financial_institutions_id', '=', $institutionId)
+        ->get();
+
+        return $contractedProducts;
     }
 
     private function requestUserIsClient()

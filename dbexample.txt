@@ -10,6 +10,13 @@ VALUES
 INSERT INTO users
 (login,password,email,entity_type,entity_id,active,remember_token,api_token,created_at,updated_at)
 VALUES
+('testInstitution2','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi','test2@email.com',
+'App\\Models\\FinancialInstitutions','2',1,'eSphhJRfoQ','RxTLTI7vlSZlilv0cFzJ29uZBsXRdKd55',
+'2021-04-30','2021-04-30');
+
+INSERT INTO users
+(login,password,email,entity_type,entity_id,active,remember_token,api_token,created_at,updated_at)
+VALUES
 ('testClient','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi','testClient@email.com',
 'App\\Models\\Clients','1',1,'eSphhJRfoQ','RzPLTI7vlSZlilv0cFzJ29uZBsXRdKd55',
 '2021-04-30','2021-04-30');

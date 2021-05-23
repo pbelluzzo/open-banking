@@ -52,6 +52,6 @@ class Contracts extends Model
 
     public function financialProducts()
     {
-        return $this->hasOne(FinancialProducts::class);
+        return $this->belongsTo(FinancialProducts::class);
     }
 }

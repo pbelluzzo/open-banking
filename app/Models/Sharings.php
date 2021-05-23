@@ -17,7 +17,7 @@ class Sharings extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'client_id' => 'integer',
+        'clients_id' => 'integer',
         'origin_institution_id' => 'integer',
         'destiny_institution_id' => 'integer'
     ];
@@ -35,5 +35,10 @@ class Sharings extends Model
             return;
         }
         $this->attributes['acceptance_date'] = Carbon::createFromFormat('d/m/Y', $acceptance_date);
+    }
+
+    public function clients()
+    {
+        return $this->belongsTo(Clients::class);
     }
 }

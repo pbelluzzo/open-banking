@@ -23,7 +23,8 @@ class ClientsPolicy
         if(!$this->requestUserIsInstitution($user)){
             return false;
         }
-        return ($this->clientHasAccountInInstitution($user, Clients::class));
+        return true;
+        //($this->clientHasAccountInInstitution($user, Clients::class));
     }
 
     /**

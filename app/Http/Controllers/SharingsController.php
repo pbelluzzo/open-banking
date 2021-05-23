@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Sharings;
+use App\Events\SharingConfirmed;
 use App\Http\Resources\Sharings as SharingsResource;
 
 
@@ -40,8 +41,14 @@ class SharingsController extends Controller
     {
         $this->authorize('update', $sharing);
 
-        $sharing->update($this->validateData());
+        $updatedSharing = request()->validate([
+            'acceptance_date' => 'required'
+        ]);
 
+        SharingConfirmed::dispatch($sharing);
+
+        $sharing->update($updatedSharing);
+        
         return (new SharingsResource($sharing))
             ->response()
             ->setStatusCode(200);
