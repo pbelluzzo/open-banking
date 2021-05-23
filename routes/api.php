@@ -51,4 +51,5 @@ Route::middleware('auth:api')->group(function() {
     Route::get('/sharings/{sharing}', 'SharingsController@show');
     Route::patch('/sharings/{sharing}', 'SharingsController@update');
     Route::delete('/sharings/{sharing}', 'SharingsController@destroy');
+    Route::get('/sharings/download/{sharing}', 'SharingsController@download');
 });

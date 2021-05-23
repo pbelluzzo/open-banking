@@ -4066,6 +4066,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "SharingsShow",
   components: {},
@@ -4178,6 +4180,19 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         alert("Não foi possível encerrar o compartilhamento");
       });
     },
+    downloadSharing: function downloadSharing() {
+      var _this6 = this;
+
+      axios.get('/api/sharings/download/' + this.sharing.id).then(function (response) {
+        var blob = new Blob([response.data]);
+        var link = document.createElement('a');
+        link.href = window.URL.createObjectURL(blob);
+        link.download = 'sharing' + _this6.sharing.id + '.xml';
+        link.click();
+      })["catch"](function (error) {
+        alert("Falha ao acessar arquivo");
+      });
+    },
     getDate: function getDate() {
       var today = new Date();
       var now = today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear();
@@ -4185,11 +4200,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     },
     getForm: function getForm() {
       return {
-        //'clients_id' : this.sharing.clients_id,
-        //'origin_institution_id' : this.sharing.origin_institution_id,
-        //'destiny_institution_id' : this.sharing.destiny_institution_id,
-        'acceptance_date': this.sharing.acceptance_date ///'xml_path' : this.sharing.xml_path
-
+        'acceptance_date': this.sharing.acceptance_date
       };
     }
   }
@@ -45119,12 +45130,25 @@ var render = function() {
           _vm.persisted && _vm.userIsInstitution()
             ? _c("div", { staticClass: "pt-6" }, [
                 _c(
-                  "button",
+                  "form",
                   {
-                    staticClass:
-                      "px-4 py-2 rounded text-sm text-green-500\n            border-2 border-green-500 font-bold mr-2 hover:no-underline hover:text-green-300 hover:border-green-300"
+                    on: {
+                      submit: function($event) {
+                        $event.preventDefault()
+                        return _vm.downloadSharing($event)
+                      }
+                    }
                   },
-                  [_vm._v("Acessar compartilhamento")]
+                  [
+                    _c(
+                      "button",
+                      {
+                        staticClass:
+                          "px-4 py-2 rounded text-sm text-green-500\n                border-2 border-green-500 font-bold mr-2 hover:no-underline hover:text-green-300 hover:border-green-300"
+                      },
+                      [_vm._v("Acessar compartilhamento")]
+                    )
+                  ]
                 )
               ])
             : !_vm.userIsInstitution()

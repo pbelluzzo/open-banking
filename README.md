@@ -38,7 +38,10 @@ https://docs.github.com/pt/github/creating-cloning-and-archiving-repositories/cl
 
 # 12 - Use o arquivo de texto dbexample, presente na pasta raiz do projeto, para criar os dados de teste no banco de dados.
 
-# 13 - Ao acessar a aplicação, faça login usando o usuário testInstitution, com a senha "password". A interface de clientes não foi implementada.
+# 13 - Ao acessar a aplicação, os seguintes usuários estão disponíveis:
+    login: testInstitution  senha: password
+    login: testInstitution2 senha: password
+    login: testClient       senha: password
 
 
 # ---------------------------------------------------------------------------------------------------

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use App\Models\Sharings;
 use App\Events\SharingConfirmed;
 use App\Http\Resources\Sharings as SharingsResource;
@@ -59,6 +60,13 @@ class SharingsController extends Controller
         $this->authorize('delete',$sharing);
 
         $sharing->delete();
+    }
+
+    public function download(Sharings $sharing)
+    {
+        preg_match('([^/]+$)',$sharing->xml_path, $fileName);
+        $sharingFile = Storage::get($fileName[0]);
+        return $sharingFile;
     }
 
     private function validateData()

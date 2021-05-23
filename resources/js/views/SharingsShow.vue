@@ -30,8 +30,10 @@
             <p v-else class="pt-2 text-red-300 pl-4">Não</p>
 
             <div v-if="persisted && userIsInstitution()" class="pt-6">
-                <button class="px-4 py-2 rounded text-sm text-green-500
-                border-2 border-green-500 font-bold mr-2 hover:no-underline hover:text-green-300 hover:border-green-300">Acessar compartilhamento</button>
+                <form @submit.prevent="downloadSharing">
+                    <button class="px-4 py-2 rounded text-sm text-green-500
+                    border-2 border-green-500 font-bold mr-2 hover:no-underline hover:text-green-300 hover:border-green-300">Acessar compartilhamento</button>
+                </form>
             </div>
             <div v-else-if="!userIsInstitution()" class="flex flex-direction-row pt-6">
                 <form @submit.prevent="confirmSharing" v-if="sharing.acceptance_date == null">
@@ -160,6 +162,21 @@ export default {
                     });
         },
 
+        downloadSharing(){
+            axios.get('/api/sharings/download/' + this.sharing.id)
+                .then(response=> {
+                    let blob = new Blob([response.data]);
+                    let link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = 'sharing' + this.sharing.id + '.xml';
+                    link.click();
+                })
+                .catch(error=> {
+                    alert("Falha ao acessar arquivo");
+                });
+
+        },
+
         getDate () {
             let today = new Date();
             let now = today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear();
@@ -168,11 +185,7 @@ export default {
 
         getForm() {
             return {
-                //'clients_id' : this.sharing.clients_id,
-                //'origin_institution_id' : this.sharing.origin_institution_id,
-                //'destiny_institution_id' : this.sharing.destiny_institution_id,
                 'acceptance_date' : this.sharing.acceptance_date,
-                ///'xml_path' : this.sharing.xml_path
             };
         }
     }
